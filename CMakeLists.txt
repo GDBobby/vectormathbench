@@ -52,8 +52,7 @@ CPMAddPackage(
 CPMAddPackage(
   NAME LinearAlgebra
   GITHUB_REPOSITORY GDBobby/LinearAlgebra
-  GIT_TAG 4ad5d007aeb436bba58b0845e4ea6c91bf318329
-  DOWNLOAD_ONLY YES
+  GIT_TAG 1d58605f385774a700a60800c803ac00aaed2295
 )
 
 
@@ -61,10 +60,10 @@ CPMAddPackage(
 add_library(sony_vectormath INTERFACE)
 target_include_directories(sony_vectormath INTERFACE ${sony_vectormath_SOURCE_DIR})
 
-add_library(LinearAlgebra INTERFACE)
-add_library(LinearAlgebra-compile-options INTERFACE)
+# add_library(LinearAlgebra INTERFACE)
+# add_library(LinearAlgebra-compile-options INTERFACE)
 message(AUTHOR_WARNING ${LinearAlgebra_SOURCE_DIR})
-target_include_directories(LinearAlgebra INTERFACE ${LinearAlgebra_SOURCE_DIR})
+# target_include_directories(LinearAlgebra INTERFACE ${LinearAlgebra_SOURCE_DIR})
 
 add_library(vmb_common INTERFACE)
 target_link_libraries(vmb_common INTERFACE 
@@ -72,10 +71,9 @@ target_link_libraries(vmb_common INTERFACE
   DirectXMath 
   sony_vectormath 
   move::vectormath 
-  rtm rtm 
-  LinearAlgebra
-  LinearAlgebra-compile-options
+  rtm rtm
 )
+
 target_sources(vmb_common INTERFACE src/main.cpp)
 
 if (UNIX)
@@ -94,16 +92,31 @@ if (UNIX)
 endif()
 
 add_executable(vectormathbench_sse42)
-target_link_libraries(vectormathbench_sse42 PRIVATE vmb_common)
+target_link_libraries(vectormathbench_sse42 PRIVATE vmb_common LinearAlgebra LinearAlgebra-compile-options)
+target_link_directories(vectormathbench_sse42 PUBLIC
+  $<$<CONFIG:Debug>:${LinearAlgebra_SOURCE_DIR}/Debug>
+  $<$<CONFIG:Release>:${LinearAlgebra_SOURCE_DIR}/Release>
+)
+target_include_directories(vectormathbench_sse42 PUBLIC ${LinearAlgebra_SOURCE_DIR})
 set_property(TARGET vectormathbench_sse42 PROPERTY OUTPUT_NAME vectormathbench_sse42)
 
 add_executable(vectormathbench_avx)
-target_link_libraries(vectormathbench_avx PRIVATE vmb_common)
+target_link_libraries(vectormathbench_avx PRIVATE vmb_common LinearAlgebra LinearAlgebra-compile-options)
+target_link_directories(vectormathbench_avx PUBLIC
+  $<$<CONFIG:Debug>:${LinearAlgebra_SOURCE_DIR}/Debug>
+  $<$<CONFIG:Release>:${LinearAlgebra_SOURCE_DIR}/Release>
+)
+target_include_directories(vectormathbench_avx PUBLIC ${LinearAlgebra_SOURCE_DIR})
 set_property(TARGET vectormathbench_avx PROPERTY OUTPUT_NAME vectormathbench_avx)
 
 
 add_executable(vectormathbench_avx2)
-target_link_libraries(vectormathbench_avx2 PRIVATE vmb_common)
+target_link_libraries(vectormathbench_avx2 PRIVATE vmb_common LinearAlgebra LinearAlgebra-compile-options)
+target_link_directories(vectormathbench_avx2 PUBLIC
+  $<$<CONFIG:Debug>:${LinearAlgebra_SOURCE_DIR}/Debug>
+  $<$<CONFIG:Release>:${LinearAlgebra_SOURCE_DIR}/Release>
+)
+target_include_directories(vectormathbench_avx2 PUBLIC ${LinearAlgebra_SOURCE_DIR})
 set_property(TARGET vectormathbench_avx2 PROPERTY OUTPUT_NAME vectormathbench_avx2)
 
 if (WIN32)
