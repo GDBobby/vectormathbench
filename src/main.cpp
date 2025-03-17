@@ -62,6 +62,9 @@ namespace std
 #include <rtm/vector4d.h>
 #include <rtm/vector4f.h>
 
+#include <LAB/Matrix.h>
+#include <LAB/Vector.h>
+
 // Sony vectormath
 #include <vectormath.hpp>
 

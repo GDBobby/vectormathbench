@@ -49,12 +49,33 @@ CPMAddPackage(
   GIT_TAG ee960fad0a4bbbf0ee2e7d03fc749c49ebeefaef
   DOWNLOAD_ONLY YES
 )
+CPMAddPackage(
+  NAME LinearAlgebra
+  GITHUB_REPOSITORY GDBobby/LinearAlgebra
+  GIT_TAG 4ad5d007aeb436bba58b0845e4ea6c91bf318329
+  DOWNLOAD_ONLY YES
+)
+
+
 
 add_library(sony_vectormath INTERFACE)
 target_include_directories(sony_vectormath INTERFACE ${sony_vectormath_SOURCE_DIR})
 
+add_library(LinearAlgebra INTERFACE)
+add_library(LinearAlgebra-compile-options INTERFACE)
+message(AUTHOR_WARNING ${LinearAlgebra_SOURCE_DIR})
+target_include_directories(LinearAlgebra INTERFACE ${LinearAlgebra_SOURCE_DIR})
+
 add_library(vmb_common INTERFACE)
-target_link_libraries(vmb_common INTERFACE glm DirectXMath sony_vectormath move::vectormath rtm rtm)
+target_link_libraries(vmb_common INTERFACE 
+  glm 
+  DirectXMath 
+  sony_vectormath 
+  move::vectormath 
+  rtm rtm 
+  LinearAlgebra
+  LinearAlgebra-compile-options
+)
 target_sources(vmb_common INTERFACE src/main.cpp)
 
 if (UNIX)
