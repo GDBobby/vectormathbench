@@ -369,87 +369,30 @@ namespace mathbench
 
     namespace vectors
     {
-        void addition(ankerl::nanobench::Bench& bench)
+        void addition2(ankerl::nanobench::Bench& bench)
         {
-            bench.run("Store int (reference 'no-op')",
-                [&]
-                {
-                    results.intnum = 0;
-                    ankerl::nanobench::doNotOptimizeAway(results.intnum);
-                });
-
-            bench.run("SimpleMath::Vector2 addition",
+            bench.run("SimpleMath",
                 [&]
                 {
                     results.smVec2 = DirectX::SimpleMath::Vector2(1.0f, 2.0f) +
                                      DirectX::SimpleMath::Vector2(3.0f, 4.0f);
                     ankerl::nanobench::doNotOptimizeAway(results.smVec2);
                 });
-
-            bench.run("SimpleMath::Vector3 addition",
-                [&]
-                {
-                    results.smVec3 =
-                        DirectX::SimpleMath::Vector3(1.0f, 2.0f, 3.0f) +
-                        DirectX::SimpleMath::Vector3(3.0f, 4.0f, 5.0f);
-                    ankerl::nanobench::doNotOptimizeAway(results.smVec3);
-                });
-
-            bench.run("SimpleMath::Vector4 addition",
-                [&]
-                {
-                    results.smVec4 =
-                        DirectX::SimpleMath::Vector4(1.0f, 2.0f, 3.0f, 4.0f) +
-                        DirectX::SimpleMath::Vector4(3.0f, 4.0f, 5.0f, 6.0f);
-                    ankerl::nanobench::doNotOptimizeAway(results.smVec4);
-                });
-
-            bench.run("glm::vec2 addition",
+            bench.run("glm",
                 [&]
                 {
                     results.glmVec2 =
                         glm::vec2(1.0f, 2.0f) + glm::vec2(3.0f, 4.0f);
                     ankerl::nanobench::doNotOptimizeAway(results.glmVec2);
                 });
-
-            bench.run("glm::vec3 addition",
-                [&]
-                {
-                    results.glmVec3 = glm::vec3(1.0f, 2.0f, 3.0f) +
-                                      glm::vec3(3.0f, 4.0f, 5.0f);
-                    ankerl::nanobench::doNotOptimizeAway(results.glmVec3);
-                });
-
-            bench.run("glm::vec4 addition",
-                [&]
-                {
-                    results.glmVec4 = glm::vec4(1.0f, 2.0f, 3.0f, 4.0f) +
-                                      glm::vec4(3.0f, 4.0f, 5.0f, 6.0f);
-                    ankerl::nanobench::doNotOptimizeAway(results.glmVec4);
-                });
-            bench.run("LAB::vector2 addition",
+            bench.run("LAB",
                 [&]
                 {
                     results.labVec2 = LAB::Vector<float, 2>(1.f, 2.f) +
                                       LAB::Vector<float, 2>(3.f, 4.f);
                     ankerl::nanobench::doNotOptimizeAway(results.labVec2);
                 });
-            bench.run("LAB::vector3 addition",
-                [&]
-                {
-                    results.labVec3 = LAB::Vector<float, 3>(1.f, 2.f, 3.f) +
-                                      LAB::Vector<float, 3>(3.f, 4.f, 5.f);
-                    ankerl::nanobench::doNotOptimizeAway(results.labVec3);
-                });
-            bench.run("LAB::vector4 addition",
-                [&]
-                {
-                    results.labVec4 = LAB::Vector<float, 4>(1.f, 2.f, 3.f, 4.f) +
-                                      LAB::Vector<float, 4>(3.f, 4.f, 5.f, 6.f);
-                    ankerl::nanobench::doNotOptimizeAway(results.labVec4);
-                });
-
-            bench.run("DirectX::XMFLOAT2 addition",
+            bench.run("DirectX",
                 [&]
                 {
                     DirectX::XMFLOAT2 lhs(1.0f, 2.0f);
@@ -462,8 +405,55 @@ namespace mathbench
                     DirectX::XMStoreFloat2(&results.dxVec2, result);
                     ankerl::nanobench::doNotOptimizeAway(results.dxVec2);
                 });
+            bench.run("Vectormath",
+                [&]
+                {
+                    results.sonyVec2 = Vectormath::Vector2(1.0f, 2.0f) +
+                                       Vectormath::Vector2(3.0f, 4.0f);
+                    ankerl::nanobench::doNotOptimizeAway(results.sonyVec2);
+                });
+            bench.run("move (float)",
+                [&]
+                {
+                    using namespace move::math;
+                    results.mvVec2f = vec2f(1.0f, 2.0f) + vec2f(3.0f, 4.0f);
+                    ankerl::nanobench::doNotOptimizeAway(results.mvVec2f);
+                });
+            bench.run("move (double)",
+                [&]
+                {
+                    using namespace move::math;
+                    results.mvVec2d = vec2d(1.0f, 2.0f) + vec2d(3.0f, 4.0f);
+                    ankerl::nanobench::doNotOptimizeAway(results.mvVec2d);
+                });
+        }
 
-            bench.run("DirectX::XMFLOAT3 addition",
+        void addition3(ankerl::nanobench::Bench& bench)
+        {
+            bench.run("SimpleMath",
+                [&]
+                {
+                    results.smVec3 =
+                        DirectX::SimpleMath::Vector3(1.0f, 2.0f, 3.0f) +
+                        DirectX::SimpleMath::Vector3(3.0f, 4.0f, 5.0f);
+                    ankerl::nanobench::doNotOptimizeAway(results.smVec3);
+                });
+            bench.run("glm",
+                [&]
+                {
+                    results.glmVec3 = glm::vec3(1.0f, 2.0f, 3.0f) +
+                                      glm::vec3(3.0f, 4.0f, 5.0f);
+                    ankerl::nanobench::doNotOptimizeAway(results.glmVec3);
+                });
+            bench.run("LAB",
+                [&]
+                {
+                    results.labVec3 = LAB::Vector<float, 3>(1.f, 2.f, 3.f) +
+                                      LAB::Vector<float, 3>(3.f, 4.f, 5.f);
+                    ankerl::nanobench::doNotOptimizeAway(results.labVec3);
+                });
+
+            bench.run("DirectX",
                 [&]
                 {
                     DirectX::XMFLOAT3 lhs(1.0f, 2.0f, 3.0f);
@@ -477,28 +467,69 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.dxVec3);
                 });
 
+            bench.run("Vectormath",
+                [&]
+                {
+                    results.sonyVec3 = Vectormath::Vector3(1.0f, 2.0f, 3.0f) +
+                                       Vectormath::Vector3(3.0f, 4.0f, 5.0f);
+                    ankerl::nanobench::doNotOptimizeAway(results.sonyVec3);
+                });
+
+            bench.run("move (float)",
+                [&]
+                {
+                    using namespace move::math;
+                    results.mvVec3f =
+                        vec3f(1.0f, 2.0f, 3.0f) + vec3f(3.0f, 4.0f, 5.0f);
+                    ankerl::nanobench::doNotOptimizeAway(results.mvVec3f);
+                });
+
+            bench.run("move (double)",
+                [&]
+                {
+                    using namespace move::math;
+                    results.mvVec3d =
+                        vec3d(1.0f, 2.0f, 3.0f) + vec3d(3.0f, 4.0f, 5.0f);
+                    ankerl::nanobench::doNotOptimizeAway(results.mvVec3d);
+                });
+        }
+        void addition4(ankerl::nanobench::Bench& bench)
+        {
+
+
+            bench.run("SimpleMath::Vector4 addition",
+                [&]
+                {
+                    results.smVec4 =
+                        DirectX::SimpleMath::Vector4(1.0f, 2.0f, 3.0f, 4.0f) +
+                        DirectX::SimpleMath::Vector4(3.0f, 4.0f, 5.0f, 6.0f);
+                    ankerl::nanobench::doNotOptimizeAway(results.smVec4);
+                });
+
+
+
+            bench.run("glm::vec4 addition",
+                [&]
+                {
+                    results.glmVec4 = glm::vec4(1.0f, 2.0f, 3.0f, 4.0f) +
+                                      glm::vec4(3.0f, 4.0f, 5.0f, 6.0f);
+                    ankerl::nanobench::doNotOptimizeAway(results.glmVec4);
+                });
+            bench.run("LAB::vector4 addition",
+                [&]
+                {
+                    results.labVec4 = LAB::Vector<float, 4>(1.f, 2.f, 3.f, 4.f) +
+                                      LAB::Vector<float, 4>(3.f, 4.f, 5.f, 6.f);
+                    ankerl::nanobench::doNotOptimizeAway(results.labVec4);
+                });
+
+
             bench.run("DirectX::XMFLOAT4 addition without Loads",
                 [&]
                 {
                     results.dxVecC = DirectX::XMVectorAdd(
                         DirectX::XMVECTOR{}, DirectX::XMVECTOR{});
                     ankerl::nanobench::doNotOptimizeAway(results.dxVecC);
-                });
-
-            bench.run("Vectormath::Vector2 addition",
-                [&]
-                {
-                    results.sonyVec2 = Vectormath::Vector2(1.0f, 2.0f) +
-                                       Vectormath::Vector2(3.0f, 4.0f);
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyVec2);
-                });
-
-            bench.run("Vectormath::Vector3 addition",
-                [&]
-                {
-                    results.sonyVec3 = Vectormath::Vector3(1.0f, 2.0f, 3.0f) +
-                                       Vectormath::Vector3(3.0f, 4.0f, 5.0f);
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyVec3);
                 });
 
             bench.run("Vectormath::Vector4 addition",
@@ -509,23 +540,6 @@ namespace mathbench
                         Vectormath::Vector4(3.0f, 4.0f, 5.0f, 6.0f);
                     ankerl::nanobench::doNotOptimizeAway(results.sonyVec4);
                 });
-
-            bench.run("move::vec2f addition (float)",
-                [&]
-                {
-                    using namespace move::math;
-                    results.mvVec2f = vec2f(1.0f, 2.0f) + vec2f(3.0f, 4.0f);
-                    ankerl::nanobench::doNotOptimizeAway(results.mvVec2f);
-                });
-
-            bench.run("move::vec3f addition (float)",
-                [&]
-                {
-                    using namespace move::math;
-                    results.mvVec3f =
-                        vec3f(1.0f, 2.0f, 3.0f) + vec3f(3.0f, 4.0f, 5.0f);
-                    ankerl::nanobench::doNotOptimizeAway(results.mvVec3f);
-                });
             bench.run("move::vec4f addition (float)",
                 [&]
                 {
@@ -533,23 +547,6 @@ namespace mathbench
                     results.mvVec4f = vec4f(1.0f, 2.0f, 3.0f, 4.0f) +
                                       vec4f(3.0f, 4.0f, 5.0f, 6.0f);
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec4f);
-                });
-
-            bench.run("move::vec2d addition (double)",
-                [&]
-                {
-                    using namespace move::math;
-                    results.mvVec2d = vec2d(1.0f, 2.0f) + vec2d(3.0f, 4.0f);
-                    ankerl::nanobench::doNotOptimizeAway(results.mvVec2d);
-                });
-
-            bench.run("move::vec3d addition (double)",
-                [&]
-                {
-                    using namespace move::math;
-                    results.mvVec3d =
-                        vec3d(1.0f, 2.0f, 3.0f) + vec3d(3.0f, 4.0f, 5.0f);
-                    ankerl::nanobench::doNotOptimizeAway(results.mvVec3d);
                 });
             bench.run("move::vec4d addition (double)",
                 [&]
@@ -1786,35 +1783,78 @@ inline void test_camera_matrix_funcs()
         float(rtm::vector_get_w(rtmMat.w_axis)));
 }
 
-int main(int argc, char** argv)
-{
-    constexpr int iterations = 10000000;
+// Function to write a section of benchmarks
+void WriteTable(std::ofstream& outFile, const std::string& section_name, std::vector<ankerl::nanobench::Result> const& results, const int iterations) {
+
+    outFile << "\n| " << section_name << "\n";
+    outFile << "|               ns/op |                op/s |    err% |     total | benchmark\n";
+    outFile << "|--------------------:|--------------------:|--------:|----------:|:----------\n";
+
+    for (auto const& ret : results) {
+        outFile << "| " << std::setw(19) << std::right << ret.median(ankerl::nanobench::Result::Measure::elapsed) * static_cast<double>(1000000000)
+                << " | " << std::setw(19) << std::right << 1.0 / ret.median(ankerl::nanobench::Result::Measure::elapsed)
+                << " | " << std::setw(6) << std::right << ret.medianAbsolutePercentError(ankerl::nanobench::Result::Measure::elapsed) << "%"
+                << " | " << std::setw(9) << std::right << 0.0
+                << " | " << ret.config().mBenchmarkName << "\n";
+    }
+};
+
+
+void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const iterations, void(*benchFunction)(ankerl::nanobench::Bench&)) {
+    ankerl::nanobench::Bench bench;
+    bench.name(name);
+    bench.minEpochIterations(iterations);
+    benchFunction(bench);
+
+    std::vector<ankerl::nanobench::Result> resultCopy = bench.results();
+
+    std::sort(resultCopy.begin(), resultCopy.end(),
+        [](ankerl::nanobench::Result ret1, ankerl::nanobench::Result ret2)
+        {
+            return ret1.median(ankerl::nanobench::Result::Measure::elapsed) <
+                ret2.median(ankerl::nanobench::Result::Measure::elapsed);
+        }
+    );
+    WriteTable(outFile, name, resultCopy, iterations);
+}
+
+
+int main(int argc, char** argv) {
+    //constexpr int iterations = 10000000;
+    constexpr int iterations = 1000;
     // test_camera_matrix_funcs();
     // if (true) return 0;
+    std::ofstream file("benchmark_results.txt", std::ios::trunc);
+    file << std::fixed << std::setprecision(2);
 
     try
     {
         {
-            ankerl::nanobench::Bench vectorBench;
-            vectorBench.name("Vectors");
-            vectorBench.minEpochIterations(iterations);
-            mathbench::vectors::addition(vectorBench);
-            mathbench::vectors::complex1(vectorBench);
-            mathbench::vectors::complex2vec3(vectorBench);
-            mathbench::vectors::complex3vec4(vectorBench);
+            ankerl::nanobench::Bench noopBench;
+            noopBench.name("noop");
+            noopBench.minEpochIterations(iterations);
+            int intnum;
+            noopBench.run("Store int (reference 'no-op')",
+                [&]
+                {
+                    intnum = 0;
+                    ankerl::nanobench::doNotOptimizeAway(intnum);
+                });
         }
+        BenchmarkWrapper("vector 2", file, iterations, mathbench::vectors::addition2);
+        BenchmarkWrapper("vector 3", file, iterations, mathbench::vectors::addition3);
+        
 
         {
-            ankerl::nanobench::Bench matrixBench;
-            matrixBench.minEpochIterations(iterations);
-            matrixBench.name("Matrices");
-            mathbench::matrices::construct_model_matrix(matrixBench);
-            mathbench::matrices::construct_view_matrix(matrixBench);
-            mathbench::matrices::construct_perspective_projection_matrix(
-                matrixBench);
-            mathbench::matrices::ortho_projection_matrix(matrixBench);
-            mathbench::matrices::vector_matrix_multiply(matrixBench);
-            mathbench::matrices::matrix_matrix_multiply(matrixBench);
+           // ankerl::nanobench::Bench matrixBench;
+            //matrixBench.minEpochIterations(iterations);
+            //matrixBench.name("Matrices");
+            //mathbench::matrices::construct_model_matrix(matrixBench);
+            //mathbench::matrices::construct_view_matrix(matrixBench);
+            //mathbench::matrices::construct_perspective_projection_matrix(matrixBench);
+           // mathbench::matrices::ortho_projection_matrix(matrixBench);
+            //mathbench::matrices::vector_matrix_multiply(matrixBench);
+            //mathbench::matrices::matrix_matrix_multiply(matrixBench);
         }
 
         printf("Benchmark complete\n");

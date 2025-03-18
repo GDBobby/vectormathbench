@@ -153,7 +153,8 @@ jobs:
           echo. >> windows_benchmark.md
           
           echo ## SSE 4.2 >> windows_benchmark.md
-          vectormathbench_sse42.exe >> windows_benchmark.md
+          Run vectormathbench_sse42.exe
+          type benchmark_results.txt >> windows_benchmark.md
           
           echo. >> windows_benchmark.md
           echo ## AVX >> windows_benchmark.md
@@ -172,9 +173,6 @@ jobs:
         name: windows_benchmark.md
         path: build/Release/windows_benchmark.md
 
-# normally this would require both ubuntu and windows to have succeeded. 
-# but ubuntu isn't working because of one of the other libs, 
-# and I really don't feel like debugging somebody else's project (for free)
   commit-push-benchmark:
     name: Benchmark Update
     needs: [benchmark-windows]
@@ -197,6 +195,7 @@ jobs:
           git add windows_benchmark.md
           git diff --staged --quiet || (git commit -m "Update benchmark results [auto]" && git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:master)
 
+# i think the issue lies with my cmake setup, i'll have to test it on my ubuntu machine later. until its fixed, only windows is benchmarked
 
   # docs:
   #   # Deploy docs only when builds succeed
