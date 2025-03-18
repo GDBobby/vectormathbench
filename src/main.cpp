@@ -1784,7 +1784,7 @@ inline void test_camera_matrix_funcs()
 }
 
 // Function to write a section of benchmarks
-void WriteTable(std::ofstream& outFile, const std::string& section_name, std::vector<ankerl::nanobench::Result> const& results, const int iterations) {
+void WriteTable(std::ofstream& outFile, const std::string& section_name, std::vector<ankerl::nanobench::Result> const& results) {
 
     outFile << "\n| " << section_name << "\n";
     outFile << "|               ns/op |                op/s |    err% |     total | benchmark\n";
@@ -1815,7 +1815,7 @@ void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const
                 ret2.median(ankerl::nanobench::Result::Measure::elapsed);
         }
     );
-    WriteTable(outFile, name, resultCopy, iterations);
+    WriteTable(outFile, name, resultCopy);
 }
 
 

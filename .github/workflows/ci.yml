@@ -153,7 +153,7 @@ jobs:
           echo. >> windows_benchmark.md
           
           echo ## SSE 4.2 >> windows_benchmark.md
-          Run vectormathbench_sse42.exe
+          vectormathbench_sse42.exe
           type benchmark_results.txt >> windows_benchmark.md
           
           echo. >> windows_benchmark.md
