@@ -64,6 +64,8 @@ namespace std
 
 #include <LAB/Matrix.h>
 #include <LAB/Vector.h>
+#include <LAB/Camera.h>
+#include <LAB/Transform.h>
 
 // Sony vectormath
 #include <vectormath.hpp>
@@ -285,6 +287,14 @@ namespace mathbench
         glm::mat4 glmMat4b;
         glm::mat4 glmMat4c;
 
+        // LAB
+        LAB::Vector<float, 2> labVec2;
+        LAB::Vector<float, 3> labVec3;
+        LAB::Vector<float, 4> labVec4;
+        LAB::Matrix<float, 4, 4> labMat4a;
+        LAB::Matrix<float, 4, 4> labMat4b;
+        LAB::Matrix<float, 4, 4> labMat4c;
+
         // DirectXMath
         DirectX::XMFLOAT2 dxVec2;
         DirectX::XMFLOAT3 dxVec3;
@@ -354,6 +364,7 @@ namespace mathbench
         DirectX::XMMATRIX dxMatA;
         DirectX::XMMATRIX dxMatB;
         DirectX::XMMATRIX dxMatC;
+
     } results;
 
     namespace vectors
@@ -415,6 +426,27 @@ namespace mathbench
                     results.glmVec4 = glm::vec4(1.0f, 2.0f, 3.0f, 4.0f) +
                                       glm::vec4(3.0f, 4.0f, 5.0f, 6.0f);
                     ankerl::nanobench::doNotOptimizeAway(results.glmVec4);
+                });
+            bench.run("LAB::vector2 addition",
+                [&]
+                {
+                    results.labVec2 = LAB::Vector<float, 2>(1.f, 2.f) +
+                                      LAB::Vector<float, 2>(3.f, 4.f);
+                    ankerl::nanobench::doNotOptimizeAway(results.labVec2);
+                });
+            bench.run("LAB::vector3 addition",
+                [&]
+                {
+                    results.labVec3 = LAB::Vector<float, 3>(1.f, 2.f, 3.f) +
+                                      LAB::Vector<float, 3>(3.f, 4.f, 5.f);
+                    ankerl::nanobench::doNotOptimizeAway(results.labVec3);
+                });
+            bench.run("LAB::vector4 addition",
+                [&]
+                {
+                    results.labVec4 = LAB::Vector<float, 4>(1.f, 2.f, 3.f, 4.f) +
+                                      LAB::Vector<float, 4>(3.f, 4.f, 5.f, 6.f);
+                    ankerl::nanobench::doNotOptimizeAway(results.labVec4);
                 });
 
             bench.run("DirectX::XMFLOAT2 addition",
@@ -590,6 +622,24 @@ namespace mathbench
                     results.glmVec4 = glm::vec4(x, y, z, w);
                     ankerl::nanobench::doNotOptimizeAway(results.glmVec4);
                 });
+            bench.run("Complex operation 1 with lab::vector",
+                [&]
+                {
+                    LAB::Vector<float, 2> vec2a(1.0f, 2.0f);
+                    LAB::Vector<float, 2> vec2b(3.0f, 4.0f);
+                    LAB::Vector<float, 3> vec3a(1.0f, 2.0f, 3.0f);
+                    LAB::Vector<float, 3> vec3b(3.0f, 4.0f, 5.0f);
+                    LAB::Vector<float, 4> vec4a(1.0f, 2.0f, 3.0f, 4.0f);
+                    LAB::Vector<float, 4> vec4b(3.0f, 4.0f, 5.0f, 6.0f);
+
+                    auto x = vec2a.DotProduct(vec2b);
+                    auto y = LAB::DotProduct(LAB::CrossProduct(vec3a, vec3b), vec3b);
+                    auto z = LAB::DotProduct(vec4a, vec4b);
+                    auto w = LAB::DotProduct(vec4a + vec4b, vec4b);
+
+                    results.labVec4 = LAB::Vector<float, 4>(x, y, z, w);
+                    ankerl::nanobench::doNotOptimizeAway(results.labVec4);
+                });
 
             bench.run("Complex operation 1 with DXM",
                 [&]
@@ -738,6 +788,18 @@ namespace mathbench
                         glm::cross((vec3a + vec3b) * vec3c - vec3d, vec3a);
                     ankerl::nanobench::doNotOptimizeAway(results.glmVec3);
                 });
+            bench.run("Complex operation 2 with lab::vec3",
+                [&]
+                {
+                    LAB::Vector<float, 3> vec3a(1.0f, 2.0f, 3.0f);
+                    LAB::Vector<float, 3> vec3b(3.0f, 4.0f, 5.0f);
+                    LAB::Vector<float, 3> vec3c(5.0f, 6.0f, 7.0f);
+                    LAB::Vector<float, 3> vec3d(7.0f, 8.0f, 9.0f);
+
+                    //LAB::CrossProduct();
+                    results.labVec3 = LAB::CrossProduct((vec3a + vec3b) * vec3c - vec3d, vec3a);
+                    ankerl::nanobench::doNotOptimizeAway(results.labVec3);
+                });
 
             bench.run("Complex operation 2 with DXM",
                 [&]
@@ -869,6 +931,17 @@ namespace mathbench
 
                     results.glmVec4 = (vec3a + vec3b) * vec3c - vec3d;
                     ankerl::nanobench::doNotOptimizeAway(results.glmVec4);
+                });
+            bench.run("Complex operation 3 with lab::vec4",
+                [&]
+                {
+                    LAB::Vector<float, 4> vec3a(1.0f, 2.0f, 3.0f, 4.0f);
+                    LAB::Vector<float, 4> vec3b(3.0f, 4.0f, 5.0f, 6.0f);
+                    LAB::Vector<float, 4> vec3c(5.0f, 6.0f, 7.0f, 8.0f);
+                    LAB::Vector<float, 4> vec3d(7.0f, 8.0f, 9.0f, 10.0f);
+
+                    results.labVec4 = (vec3a + vec3b) * vec3c - vec3d;
+                    ankerl::nanobench::doNotOptimizeAway(results.labVec4);
                 });
 
             bench.run("Complex operation 3 with DXM",
@@ -1031,6 +1104,18 @@ namespace mathbench
                                        glm::scale(glm::mat4(1.0f),
                                            glm::vec3(1.0f, 2.0f, 3.0f));
                     ankerl::nanobench::doNotOptimizeAway(results.glmMat4a);
+                });
+            bench.run("Construct model matrix LAB (~transformation matrix)",
+                [&]
+                {
+                    LAB::Transform<float, 3> transform{
+                        LAB::Vector<float, 3>(1.0f, 2.0f, 3.0f), //translation
+                        LAB::Vector<float, 3>(0.5f, 0.5f, 0.5f), //rotation,
+                        LAB::Vector<float, 3>(1.f, 2.f, 3.f) //scale
+                    };
+
+                    results.labMat4a = transform.GetMatrix();
+                    ankerl::nanobench::doNotOptimizeAway(results.labMat4a);
                 });
 
             bench.run("Construct model matrix DXM (manual)",
@@ -1225,6 +1310,14 @@ namespace mathbench
                         glm::vec3(7.0f, 8.0f, 9.0f));
                     ankerl::nanobench::doNotOptimizeAway(results.glmMat4a);
                 });
+            bench.run("Construct view matrix LAB",
+                [&]
+                {
+                    results.labMat4a = LAB::CreateViewMatrix(
+                        LAB::Vector<float, 3>(1.0f, 2.0f, 3.0f),
+                        LAB::Vector<float, 3>(4.0f, 5.0f, 6.0f));
+                    ankerl::nanobench::doNotOptimizeAway(results.labMat4a);
+                });
 
             bench.run("Construct view matrix DXM",
                 [&]
@@ -1310,6 +1403,12 @@ namespace mathbench
                         glm::perspective(0.5f, 1.0f, 0.1f, 100.0f);
                     ankerl::nanobench::doNotOptimizeAway(results.glmMat4a);
                 });
+            bench.run("Construct perspective matrix LAB",
+                [&]
+                {
+                    results.labMat4a = LAB::CreateProjectionMatrix(0.5f, 0.1f, 100.f);
+                    ankerl::nanobench::doNotOptimizeAway(results.labMat4a);
+                });
 
             bench.run("Construct perspective matrix DXM",
                 [&]
@@ -1386,6 +1485,12 @@ namespace mathbench
                         glm::ortho<float>(0, 1280, 0, 720, 0.1f, 100.0f);
                     ankerl::nanobench::doNotOptimizeAway(results.glmMat4a);
                 });
+            bench.run("Construct ortho matrix lab",
+                [&]
+                {
+                    results.labMat4a = LAB::CreateOrthographicMatrix(0.f, 720.f, 0.f, 1280.f, 0.1f, 100.f);
+                    ankerl::nanobench::doNotOptimizeAway(results.labMat4a);
+                });
 
             bench.run("Construct ortho matrix DXM",
                 [&]
@@ -1459,6 +1564,11 @@ namespace mathbench
                 {
                     results.glmVec4 = results.glmMat4a * results.glmVec4;
                     ankerl::nanobench::doNotOptimizeAway(results.glmVec4);
+                });
+            bench.run("Vector matrix multiply lab", 
+                [&] {
+                    results.labVec4 = results.labMat4a * results.labVec4;
+                    ankerl::nanobench::doNotOptimizeAway(results.labVec4);
                 });
 
             bench.run("Vector matrix multiply DXM",
@@ -1548,6 +1658,13 @@ namespace mathbench
                 {
                     results.glmMat4a = results.glmMat4b * results.glmMat4c;
                     ankerl::nanobench::doNotOptimizeAway(results.glmMat4a);
+                });
+            bench.run("Matrix matrix multiply LAB",
+                [&]
+                {
+                    results.labMat4a = results.labMat4b * results.labMat4c;
+                    ankerl::nanobench::doNotOptimizeAway(results.labMat4a);
+
                 });
 
             bench.run("Matrix matrix multiply DXM",
