@@ -117,6 +117,16 @@ jobs:
     - name: Build
       run: cmake --build build --config Release -j 2
 
+    - name: Create Benchmark File
+      shell: pwsh
+      run: |
+        if ((Test-Path "windows_benchmark.md")) {
+          Clear-Content -Path "windows_benchmark.md"
+        }
+        else{
+          New-Item -Path "windows_benchmark.md" -ItemType "file"
+        }
+
     - name: Run Benchmark
       shell: cmd
       working-directory: build/Release
@@ -140,32 +150,28 @@ jobs:
             set CPU_NAME=%%i
         )
         
-        echo # Benchmark Results (windows-2022) > BENCHMARK.md
-        echo. >> BENCHMARK.md
+        echo # Benchmark Results (windows-2022) > windows_benchmark.md
+        echo. >> windows_benchmark.md
         
-        echo ## System Info >> BENCHMARK.md
-        echo CPU: %CPU_NAME% >> BENCHMARK.md
-        echo OS: %OS_NAME% >> BENCHMARK.md
-        echo OS Version: %OS_VERSION% >> BENCHMARK.md
+        echo ## System Info >> windows_benchmark.md
+        echo CPU: %CPU_NAME% >> windows_benchmark.md
+        echo OS: %OS_NAME% >> windows_benchmark.md
+        echo OS Version: %OS_VERSION% >> windows_benchmark.md
     
-        echo. >> BENCHMARK.md
+        echo. >> windows_benchmark.md
     
-        echo ## SSE 4.2 >> BENCHMARK.md
-        vectormathbench_sse42.exe >> BENCHMARK.md
+        echo ## SSE 4.2 >> windows_benchmark.md
+        vectormathbench_sse42.exe >> windows_benchmark.md
     
-        echo. >> BENCHMARK.md
-        echo ## AVX >> BENCHMARK.md
-        vectormathbench_avx.exe >> BENCHMARK.md
+        echo. >> windows_benchmark.md
+        echo ## AVX >> windows_benchmark.md
+        vectormathbench_avx.exe >> windows_benchmark.md
     
-        echo. >> BENCHMARK.md
-        echo ## AVX2 >> BENCHMARK.md
-        vectormathbench_avx2.exe >> BENCHMARK.md
+        echo. >> windows_benchmark.md
+        echo ## AVX2 >> windows_benchmark.md
+        vectormathbench_avx2.exe >> windows_benchmark.md
 
-        cat BENCHMARK.md >> %GITHUB_STEP_SUMMARY%
-    
-    - name: Rename Benchmark File
-      shell: pwsh
-      run: Rename-Item -Path BENCHMARK.md -NewName windows_benchmark.md
+        cat windows_benchmark.md >> %GITHUB_STEP_SUMMARY%
 
     - name: Upload Windows Benchmark
       uses: actions/upload-artifact@v4
