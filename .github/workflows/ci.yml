@@ -206,31 +206,30 @@ jobs:
         name: windows_benchmark.md
         path: BENCHMARK.md
 
-        
 # normally this would require both ubuntu and windows to have succeeded. 
 # but ubuntu isn't working because of one of the other libs, 
 # and I really don't feel like debugging somebody else's project (for free)
- commit-push-benchmark:
-  name: Benchmark Update
-  needs: [benchmark-windows]
-  runs-on: ubuntu-latest
-  shell: bash
+  commit-push-benchmark:
+    name: Benchmark Update
+    needs: [benchmark-windows]
+    runs-on: ubuntu-latest
   
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-      
-    - name: Download Windows msvc Output
-      uses: actions/download-artifact@v4
-      with:
-        name: windows_benchmark.md
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: Download Windows msvc Output
+        uses: actions/download-artifact@v4
+        with:
+          name: windows_benchmark.md
 
-    - name: push and commit
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add windows_benchmark.md
-        git diff --staged --quiet || (git commit -m "Update benchmark results [auto]" && git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main)
+      - name: push and commit
+        shell: bash
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add windows_benchmark.md
+          git diff --staged --quiet || (git commit -m "Update benchmark results [auto]" && git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main)
 
 
   # docs:
