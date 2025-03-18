@@ -1840,22 +1840,21 @@ int main(int argc, char** argv) {
                     intnum = 0;
                     ankerl::nanobench::doNotOptimizeAway(intnum);
                 });
+            WriteTable(file, "no-op", noopBench.results());
         }
         BenchmarkWrapper("vector 2", file, iterations, mathbench::vectors::addition2);
         BenchmarkWrapper("vector 3", file, iterations, mathbench::vectors::addition3);
-        
+        BenchmarkWrapper("vector 4", file, iterations, mathbench::vectors::addition4);
+        BenchmarkWrapper("complex1", file, iterations, mathbench::vectors::complex1);
+        BenchmarkWrapper("complex2 vec3", file, iterations, mathbench::vectors::complex2vec3);
+        BenchmarkWrapper("complex3 vec4", file, iterations, mathbench::vectors::complex3vec4);
 
-        {
-           // ankerl::nanobench::Bench matrixBench;
-            //matrixBench.minEpochIterations(iterations);
-            //matrixBench.name("Matrices");
-            //mathbench::matrices::construct_model_matrix(matrixBench);
-            //mathbench::matrices::construct_view_matrix(matrixBench);
-            //mathbench::matrices::construct_perspective_projection_matrix(matrixBench);
-           // mathbench::matrices::ortho_projection_matrix(matrixBench);
-            //mathbench::matrices::vector_matrix_multiply(matrixBench);
-            //mathbench::matrices::matrix_matrix_multiply(matrixBench);
-        }
+        BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::construct_model_matrix);
+        BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::construct_view_matrix);
+        BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::construct_perspective_projection_matrix);
+        BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::ortho_projection_matrix);
+        BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::vector_matrix_multiply);
+        BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::matrix_matrix_multiply);
 
         printf("Benchmark complete\n");
     }
