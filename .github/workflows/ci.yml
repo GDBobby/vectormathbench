@@ -158,13 +158,13 @@ jobs:
           
           echo. >> windows_benchmark.md
           echo ## AVX >> windows_benchmark.md
-          vectormathbench_avx.exe >> windows_benchmark.md
+          vectormathbench_avx.exe 
+          type benchmark_results.txt >> windows_benchmark.md
           
           echo. >> windows_benchmark.md
           echo ## AVX2 >> windows_benchmark.md
-          vectormathbench_avx2.exe >> windows_benchmark.md
-      
-          type windows_benchmark.md >> %GITHUB_STEP_SUMMARY%
+          vectormathbench_avx2.exe
+          type benchmark_results.txt >> windows_benchmark.md
 
 
     - name: Upload Windows Benchmark
