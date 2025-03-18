@@ -117,61 +117,53 @@ jobs:
     - name: Build
       run: cmake --build build --config Release -j 2
 
-    - name: Create Benchmark File
-      shell: pwsh
-      run: |
-        if ((Test-Path "windows_benchmark.md")) {
-          Clear-Content -Path "windows_benchmark.md"
-        }
-        else{
-          New-Item -Path "windows_benchmark.md" -ItemType "file"
-        }
-
     - name: Run Benchmark
       shell: cmd
       working-directory: build/Release
       run: |
-        set OS_NAME=
-        set OS_VERSION=
-        set CPU_NAME=
-    
-        REM Capture OS Name
-        for /f "tokens=2*" %%i in ('systeminfo ^| findstr /B /C:"OS Name"') do (
-            set OS_NAME=%%j
-        )
-    
-        REM Capture OS Version
-        for /f "tokens=2*" %%i in ('systeminfo ^| findstr /B /C:"OS Version"') do (
-            set OS_VERSION=%%j
-        )
-    
-        REM Capture CPU Name
-        for /f "tokens=2 delims==" %%i in ('wmic cpu get name /value') do (
-            set CPU_NAME=%%i
-        )
-        
-        echo # Benchmark Results (windows-2022) > windows_benchmark.md
-        echo. >> windows_benchmark.md
-        
-        echo ## System Info >> windows_benchmark.md
-        echo CPU: %CPU_NAME% >> windows_benchmark.md
-        echo OS: %OS_NAME% >> windows_benchmark.md
-        echo OS Version: %OS_VERSION% >> windows_benchmark.md
-    
-        echo. >> windows_benchmark.md
-    
-        echo ## SSE 4.2 >> windows_benchmark.md
-        vectormathbench_sse42.exe >> windows_benchmark.md
-    
-        echo. >> windows_benchmark.md
-        echo ## AVX >> windows_benchmark.md
-        vectormathbench_avx.exe >> windows_benchmark.md
-    
-        echo. >> windows_benchmark.md
-        echo ## AVX2 >> windows_benchmark.md
-        vectormathbench_avx2.exe >> windows_benchmark.md
+          setlocal enabledelayedexpansion
+          set OS_NAME=
+          set OS_VERSION=
+          set CPU_NAME=
+          
+          REM Capture OS Name
+          for /f "tokens=2*" %%i in ('systeminfo ^| findstr /B /C:"OS Name"') do (
+              set OS_NAME=%%j
+          )
+          
+          REM Capture OS Version
+          for /f "tokens=2*" %%i in ('systeminfo ^| findstr /B /C:"OS Version"') do (
+              set OS_VERSION=%%j
+          )
+          
+          REM Capture CPU Name
+          for /f "tokens=2 delims==" %%i in ('wmic cpu get name /value') do (
+              set CPU_NAME=%%i
+          )
+          
+          echo # Benchmark Results (windows-2022) > windows_benchmark.md
+          echo. >> windows_benchmark.md
+          
+          echo ## System Info >> windows_benchmark.md
+          echo CPU: !CPU_NAME! >> windows_benchmark.md
+          echo OS: !OS_NAME! >> windows_benchmark.md
+          echo OS Version: !OS_VERSION! >> windows_benchmark.md
+          
+          echo. >> windows_benchmark.md
+          
+          echo ## SSE 4.2 >> windows_benchmark.md
+          vectormathbench_sse42.exe >> windows_benchmark.md
+          
+          echo. >> windows_benchmark.md
+          echo ## AVX >> windows_benchmark.md
+          vectormathbench_avx.exe >> windows_benchmark.md
+          
+          echo. >> windows_benchmark.md
+          echo ## AVX2 >> windows_benchmark.md
+          vectormathbench_avx2.exe >> windows_benchmark.md
+      
+          type windows_benchmark.md >> %GITHUB_STEP_SUMMARY%
 
-        cat windows_benchmark.md >> %GITHUB_STEP_SUMMARY%
 
     - name: Upload Windows Benchmark
       uses: actions/upload-artifact@v4
