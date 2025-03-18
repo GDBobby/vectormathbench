@@ -32,43 +32,6 @@ jobs:
       if: false
       run: cmake -P cmake/spell.cmake
 
-  coverage:
-    needs: [lint]
-
-    runs-on: ubuntu-latest
-
-    # To enable coverage, delete the last line from the conditional below and
-    # edit the "RasterDuck" placeholder to your GitHub name.
-    # If you do not wish to use codecov, then simply delete this job from the
-    # workflow.
-    if: github.repository_owner == 'GDBobby'
-      && false
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Install LCov
-      run: sudo apt-get update -q
-        && sudo apt-get install lcov -q -y
-
-    - name: Configure
-      run: cmake --preset=ci-coverage
-
-    - name: Build
-      run: cmake --build build/coverage -j 2
-
-    - name: Test
-      working-directory: build/coverage
-      run: ctest --output-on-failure -j 2
-
-    - name: Process coverage info
-      run: cmake --build build/coverage -t coverage
-
-    - name: Submit to codecov.io
-      uses: codecov/codecov-action@v1
-      with:
-        file: build/coverage/coverage.info
-
   #sanitize:
     #needs: [lint]
 
@@ -200,11 +163,15 @@ jobs:
 
         cat BENCHMARK.md >> %GITHUB_STEP_SUMMARY%
     
+    - name: Rename Benchmark File
+      shell: pwsh
+      run: Rename-Item -Path BENCHMARK.md -NewName windows_benchmark.md
+
     - name: Upload Windows Benchmark
       uses: actions/upload-artifact@v4
       with:
         name: windows_benchmark.md
-        path: BENCHMARK.md
+        path: windows_benchmark.md
 
 # normally this would require both ubuntu and windows to have succeeded. 
 # but ubuntu isn't working because of one of the other libs, 
