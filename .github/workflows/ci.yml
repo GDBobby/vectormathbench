@@ -41,7 +41,7 @@ jobs:
     # edit the "RasterDuck" placeholder to your GitHub name.
     # If you do not wish to use codecov, then simply delete this job from the
     # workflow.
-    if: github.repository_owner == 'RasterDuck'
+    if: github.repository_owner == 'GDBobby'
       && false
 
     steps:
@@ -69,13 +69,13 @@ jobs:
       with:
         file: build/coverage/coverage.info
 
-  sanitize:
-    needs: [lint]
+  #sanitize:
+    #needs: [lint]
 
-    runs-on: ubuntu-latest
+    #runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v2
+    #steps:
+    #- uses: actions/checkout@v2
 
     # - name: Configure
     #   env: { CXX: clang++-12 }
@@ -95,31 +95,66 @@ jobs:
     #     UBSAN_OPTIONS: print_stacktrace=1
     #   run: ctest --output-on-failure -j 2
 
-  benchmark:
+  benchmark-ubuntu-latest:
     needs: [lint]
 
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-2022] # macos-latest
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Install static analyzers
-      if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get install clang-tidy cppcheck -y -q
 
     - name: Configure
       shell: pwsh
-      run: cmake "--preset=ci-$("${{ matrix.os }}".split("-")[0])"
+      run: cmake "--preset=ci-ubuntu"
+
+    - name: Build
+      run: cmake --build build --config Release -j 2
+
+      
+    - name: Run Benchmark
+      working-directory: build
+      run: |
+        echo "# Benchmark Results (ubuntu-latest)" > BENCHMARK.md
+        echo "" >> BENCHMARK.md
+
+        echo ## System Info >> BENCHMARK.md
+        echo CPU: $(lscpu | grep "Model name" | sed -e 's/Model name: *//') >> BENCHMARK.md
+        echo OS: $(lsb_release -d | sed -e 's/Description: *//') >> BENCHMARK.md
+        echo OS Version: $(lsb_release -r | sed -e 's/Release: *//') >> BENCHMARK.md
+        echo "" >> BENCHMARK.md
+        
+        echo "## SSE 4.2" >> BENCHMARK.md
+        ./vectormathbench_sse42 >> BENCHMARK.md
+        echo "" >> BENCHMARK.md
+        
+        echo "## AVX" >> BENCHMARK.md
+        ./vectormathbench_avx >> BENCHMARK.md
+        echo "" >> BENCHMARK.md
+        
+        echo "## AVX2" >> BENCHMARK.md
+        ./vectormathbench_avx2 >> BENCHMARK.md
+
+        cat BENCHMARK.md >> $GITHUB_STEP_SUMMARY
+
+  benchmark-windows:
+    needs: [lint]
+
+    runs-on: windows-2022
+    
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Configure
+      shell: pwsh
+      run: cmake "--preset=ci-windows"
 
     - name: Build
       run: cmake --build build --config Release -j 2
 
     - name: Run Benchmark
-      if: matrix.os == 'windows-2022'
       shell: cmd
       working-directory: build/Release
       run: |
@@ -165,31 +200,6 @@ jobs:
 
         cat BENCHMARK.md >> %GITHUB_STEP_SUMMARY%
     
-    - name: Run Benchmark
-      if: matrix.os == 'ubuntu-latest'
-      working-directory: build
-      run: |
-        echo "# Benchmark Results (ubuntu-latest)" > BENCHMARK.md
-        echo "" >> BENCHMARK.md
-
-        echo ## System Info >> BENCHMARK.md
-        echo CPU: $(lscpu | grep "Model name" | sed -e 's/Model name: *//') >> BENCHMARK.md
-        echo OS: $(lsb_release -d | sed -e 's/Description: *//') >> BENCHMARK.md
-        echo OS Version: $(lsb_release -r | sed -e 's/Release: *//') >> BENCHMARK.md
-        echo "" >> BENCHMARK.md
-        
-        echo "## SSE 4.2" >> BENCHMARK.md
-        ./vectormathbench_sse42 >> BENCHMARK.md
-        echo "" >> BENCHMARK.md
-        
-        echo "## AVX" >> BENCHMARK.md
-        ./vectormathbench_avx >> BENCHMARK.md
-        echo "" >> BENCHMARK.md
-        
-        echo "## AVX2" >> BENCHMARK.md
-        ./vectormathbench_avx2 >> BENCHMARK.md
-
-        cat BENCHMARK.md >> $GITHUB_STEP_SUMMARY
 
 
   # docs:
