@@ -142,6 +142,7 @@ jobs:
           )
           
           echo # Benchmark Results (windows-2022) > windows_benchmark.md
+          echo Full Path: %cd%\windows_benchmark.md
           echo. >> windows_benchmark.md
           
           echo ## System Info >> windows_benchmark.md
@@ -169,7 +170,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: windows_benchmark.md
-        path: windows_benchmark.md
+        path: build/Release/windows_benchmark.md
 
 # normally this would require both ubuntu and windows to have succeeded. 
 # but ubuntu isn't working because of one of the other libs, 
@@ -194,7 +195,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add windows_benchmark.md
-          git diff --staged --quiet || (git commit -m "Update benchmark results [auto]" && git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main)
+          git diff --staged --quiet || (git commit -m "Update benchmark results [auto]" && git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:master)
 
 
   # docs:
