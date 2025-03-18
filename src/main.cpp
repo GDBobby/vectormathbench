@@ -1820,8 +1820,8 @@ void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const
 
 
 int main(int argc, char** argv) {
-    //constexpr int iterations = 10000000;
-    constexpr int iterations = 1000;
+    constexpr int iterations = 10000000;
+    //constexpr int iterations = 1000; //quick testing
     // test_camera_matrix_funcs();
     // if (true) return 0;
     std::ofstream file("benchmark_results.txt", std::ios::trunc);
