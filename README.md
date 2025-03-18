@@ -1,3 +1,7 @@
+# Fork
+https://github.com/RasterDuck/vectormathbench
+This is a direct copy, I'm using it to compare performance with my library, [LinearAlgebra(LAB)](https://github.com/GDBobby/LinearAlgebra)
+
 # Vector Math Benchmark
 
 This project benchmarks several open source vector math libraries against one another to establish a baseline for performance.  Currently, it tests [GLM](https://github.com/g-truc/glm), [DirectXMath](https://github.com/microsoft/DirectXMath), [SimpleMath from DirectXTK](https://github.com/microsoft/DirectXTK/blob/main/Inc/SimpleMath.h), [this fork of Sony's Vectormath](https://github.com/glampert/vectormath), [move::vectormath](https://github.com/move-engine/move-vectormath), and [Realtime Math](https://github.com/nfrechette/rtm).  It tests the performance of all libraries under SSE4.2, AVX, and AVX2.
