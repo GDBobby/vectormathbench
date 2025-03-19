@@ -1853,8 +1853,8 @@ void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const
 
 
 int main() {
-    //constexpr int iterations = 10000000;
-    constexpr int iterations = 1000; //quick testing
+    constexpr int iterations = 10000000;
+    //constexpr int iterations = 1000; //quick testing
     // test_camera_matrix_funcs();
     std::ofstream file("benchmark_results.txt", std::ios::trunc);
     file << std::fixed << std::setprecision(2);
@@ -1885,11 +1885,11 @@ int main() {
         BenchmarkWrapper("complex3 vec4", file, iterations, mathbench::vectors::complex3vec4);
 
         BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::construct_model_matrix);
-        BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::construct_view_matrix);
-        BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::construct_perspective_projection_matrix);
-        BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::ortho_projection_matrix);
-        BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::vector_matrix_multiply);
-        BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::matrix_matrix_multiply);
+        BenchmarkWrapper("view matrix", file, iterations, mathbench::matrices::construct_view_matrix);
+        BenchmarkWrapper("perspective matrix", file, iterations, mathbench::matrices::construct_perspective_projection_matrix);
+        BenchmarkWrapper("ortho matrix", file, iterations, mathbench::matrices::ortho_projection_matrix);
+        BenchmarkWrapper("matrix * vector", file, iterations, mathbench::matrices::vector_matrix_multiply);
+        BenchmarkWrapper("matrix * matrix", file, iterations, mathbench::matrices::matrix_matrix_multiply);
 #endif
 
         printf("Benchmark complete\n");
