@@ -1783,11 +1783,11 @@ inline void test_camera_matrix_funcs()
 }
 
 // Function to write a section of benchmarks
-void WriteTable(std::ofstream& outFile, const std::string& section_name, std::vector<ankerl::nanobench::Result> const& results) {
+void WriteTable(std::ofstream& outFile, const std::string& section_name, std::vector<ankerl::nanobench::Result>& results) {
 
     outFile << "\n| " << section_name << "\n";
-    outFile << "|               ns/op |                op/s |    err% |     total | benchmark\n";
-    outFile << "|--------------------:|--------------------:|--------:|----------:|:----------\n";
+    outFile << "|      ns/op (median) |      ns/op(average) |    err% |  iterations | library\n";
+    outFile << "|--------------------:|--------------------:|--------:|------------:|:----------\n";
 
     /*
     for (auto const& ret : results) {
@@ -1799,12 +1799,44 @@ void WriteTable(std::ofstream& outFile, const std::string& section_name, std::ve
     }
     */
    //ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::elapsed]
-    for (auto const& ret : results) {
-        outFile << "| " << std::setw(19) << std::right << ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::elapsed].size()
-                << " | " << std::setw(19) << std::right << std::fixed << std::setprecision(10) <<  ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::elapsed][0]
-                << " | " << std::setw(6) << std::right << ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::iterations].size()
-                << " | " << std::setw(9) << std::right << std::fixed << std::setprecision(2) << ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::iterations][0]
-                << " | " << ret.config().mBenchmarkName << "\n";
+    struct SortedResultsStruct {
+        double median;
+        double average;
+        double errPerc;
+        uint64_t totalIter;
+        std::string libName;
+    };
+    std::vector<SortedResultsStruct> sortedResults{};
+    sortedResults.reserve(results.size());
+
+    for (auto& ret : results) {
+        std::sort(ret.bbm.begin(), ret.bbm.end(), [](auto left, auto right) {return left.nanoseconds < right.nanoseconds; });
+
+        std::size_t totalNano = 0;
+        std::size_t totalIter = 0;
+        for (auto const& bm : ret.bbm) {
+            totalNano += bm.nanoseconds;
+            totalIter += bm.iterCount;
+        }
+        auto& empBack = sortedResults.emplace_back();
+        empBack.median = static_cast<double>(ret.bbm[ret.bbm.size() / 2].nanoseconds) / static_cast<double>(ret.bbm[ret.bbm.size() / 2].iterCount);
+        empBack.average = static_cast<double>(totalNano) / static_cast<double>(totalIter);
+        empBack.errPerc = ret.medianAbsolutePercentError(ankerl::nanobench::Result::Measure::elapsed) * 100.0;
+        empBack.totalIter = totalIter;
+        empBack.libName = ret.config().mBenchmarkName;
+    }
+    std::sort(sortedResults.begin(), sortedResults.end(), [](auto left, auto right) {return left.median < right.median; });
+    for (auto& ret : sortedResults) {
+        outFile
+            << "| " << std::setw(19) << std::right << ret.median
+
+            << " | " << std::setw(19) << std::right << ret.average
+
+            << " | " << std::setw(6) << std::right << ret.errPerc << "%"
+
+            << " | " << std::setw(11) << std::right << ret.totalIter
+
+            << " | " << ret.libName << "\n";
     }
 };
 
@@ -1816,17 +1848,6 @@ void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const
     benchFunction(bench);
 
     std::vector<ankerl::nanobench::Result> resultCopy = bench.results();
-    //resultCopy[0].mName
-
-    
-
-    std::sort(resultCopy.begin(), resultCopy.end(),
-        [](ankerl::nanobench::Result ret1, ankerl::nanobench::Result ret2)
-        {
-            return ret1.median(ankerl::nanobench::Result::Measure::elapsed) <
-                ret2.median(ankerl::nanobench::Result::Measure::elapsed);
-        }
-    );
     WriteTable(outFile, name, resultCopy);
 }
 
@@ -1851,9 +1872,12 @@ int main() {
                     intnum = 0;
                     ankerl::nanobench::doNotOptimizeAway(intnum);
                 });
-            WriteTable(file, "no-op", noopBench.results());
+            auto resultCopy = noopBench.results();
+            WriteTable(file, "no-op", resultCopy);
         }
         BenchmarkWrapper("vector 2", file, iterations, mathbench::vectors::addition2);
+//this is here for quick testing. just toggle 0 to 1 for quick enable/disable
+#if 1
         BenchmarkWrapper("vector 3", file, iterations, mathbench::vectors::addition3);
         BenchmarkWrapper("vector 4", file, iterations, mathbench::vectors::addition4);
         BenchmarkWrapper("complex1", file, iterations, mathbench::vectors::complex1);
@@ -1866,6 +1890,7 @@ int main() {
         BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::ortho_projection_matrix);
         BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::vector_matrix_multiply);
         BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::matrix_matrix_multiply);
+#endif
 
         printf("Benchmark complete\n");
     }

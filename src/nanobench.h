@@ -462,6 +462,16 @@ public:
     // Finds string, if not found, returns _size.
     static Measure fromString(std::string const& str);
 
+    struct BobbyBenchmarkStruct {
+        std::size_t nanoseconds;
+        uint64_t iterCount;
+
+        BobbyBenchmarkStruct(std::size_t nanoseconds, uint64_t iterCount) : nanoseconds{ nanoseconds }, iterCount{ iterCount }
+        {
+        }
+    };
+    std::vector<BobbyBenchmarkStruct> bbm;
+
     Config mConfig{};
     std::vector<std::vector<double>> mNameToMeasurements{};
 };
@@ -2923,6 +2933,10 @@ Result::Result(Config benchmarkConfig)
 void Result::add(Clock::duration totalElapsed, uint64_t iters, detail::PerformanceCounters const& pc) {
     using detail::d;
     using detail::u;
+
+    bbm.emplace_back(static_cast<std::size_t>(totalElapsed.count()), iters);
+    
+    
 
     double const dIters = d(iters);
     mNameToMeasurements[u(Result::Measure::iterations)].push_back(dIters);
