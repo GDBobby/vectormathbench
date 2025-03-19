@@ -2927,7 +2927,7 @@ void Result::add(Clock::duration totalElapsed, uint64_t iters, detail::Performan
     double const dIters = d(iters);
     mNameToMeasurements[u(Result::Measure::iterations)].push_back(dIters);
 
-    mNameToMeasurements[u(Result::Measure::elapsed)].push_back(d(totalElapsed) / dIters);
+    mNameToMeasurements[u(Result::Measure::elapsed)].push_back(d(totalElapsed));
     if (pc.has().pageFaults) {
         mNameToMeasurements[u(Result::Measure::pagefaults)].push_back(d(pc.val().pageFaults) / dIters);
     }
