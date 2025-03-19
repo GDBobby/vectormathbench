@@ -1801,9 +1801,9 @@ void WriteTable(std::ofstream& outFile, const std::string& section_name, std::ve
    //ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::elapsed]
     for (auto const& ret : results) {
         outFile << "| " << std::setw(19) << std::right << ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::elapsed].size()
-                << " | " << std::setw(19) << std::right << ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::elapsed][0]
+                << " | " << std::setw(19) << std::right << std::fixed << std::setprecision(10) <<  ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::elapsed][0]
                 << " | " << std::setw(6) << std::right << ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::iterations].size()
-                << " | " << std::setw(9) << std::right << ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::iterations][0]
+                << " | " << std::setw(9) << std::right << std::fixed << std::setprecision(2) << ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::iterations][0]
                 << " | " << ret.config().mBenchmarkName << "\n";
     }
 };
@@ -1835,7 +1835,6 @@ int main() {
     //constexpr int iterations = 10000000;
     constexpr int iterations = 1000; //quick testing
     // test_camera_matrix_funcs();
-    // if (true) return 0;*
     std::ofstream file("benchmark_results.txt", std::ios::trunc);
     file << std::fixed << std::setprecision(2);
 
