@@ -619,7 +619,7 @@ namespace mathbench
                     results.glmVec4 = glm::vec4(x, y, z, w);
                     ankerl::nanobench::doNotOptimizeAway(results.glmVec4);
                 });
-            bench.run("lab",
+            bench.run("LAB",
                 [&]
                 {
                     LAB::Vector<float, 2> vec2a(1.0f, 2.0f);
@@ -929,7 +929,7 @@ namespace mathbench
                     results.glmVec4 = (vec3a + vec3b) * vec3c - vec3d;
                     ankerl::nanobench::doNotOptimizeAway(results.glmVec4);
                 });
-            bench.run("lab",
+            bench.run("LAB",
                 [&]
                 {
                     LAB::Vector<float, 4> vec3a(1.0f, 2.0f, 3.0f, 4.0f);
@@ -1793,7 +1793,7 @@ void WriteTable(std::ofstream& outFile, const std::string& section_name, std::ve
     for (auto const& ret : results) {
         outFile << "| " << std::setw(19) << std::right << ret.median(ankerl::nanobench::Result::Measure::elapsed) * static_cast<double>(1000000000)
                 << " | " << std::setw(19) << std::right << 1.0 / ret.median(ankerl::nanobench::Result::Measure::elapsed)
-                << " | " << std::setw(6) << std::right << ret.medianAbsolutePercentError(ankerl::nanobench::Result::Measure::elapsed) << "%"
+                << " | " << std::setw(6) << std::right << ret.medianAbsolutePercentError(ankerl::nanobench::Result::Measure::elapsed) * 100.0 << "%"
                 << " | " << std::setw(9) << std::right << 0.0
                 << " | " << ret.config().mBenchmarkName << "\n";
     }
