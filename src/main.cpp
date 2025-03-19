@@ -1146,9 +1146,8 @@ namespace mathbench
                     XMVECTOR RotationQuaternion =
                         XMQuaternionRotationRollPitchYaw(0.5f, 0.5f, 0.5f);
                     XMVECTOR Translation = XMVectorSet(1.0f, 2.0f, 3.0f, 0.0f);
-                    XMVECTOR Scale = XMVectorSet(1.0f, 2.0f, 3.0f, 0.0f);
-                    XMVECTOR Rotation =
-                        XMQuaternionRotationRollPitchYaw(0.5f, 0.5f, 0.5f);
+                    //XMVECTOR Scale = XMVectorSet(1.0f, 2.0f, 3.0f, 0.0f);
+                    //XMVECTOR Rotation = XMQuaternionRotationRollPitchYaw(0.5f, 0.5f, 0.5f);
 
                     results.dxMatA = XMMatrixTransformation(ScalingOrigin,
                         ScalingOrientationQuaternion, Scaling, RotationOrigin,
@@ -1790,10 +1789,20 @@ void WriteTable(std::ofstream& outFile, const std::string& section_name, std::ve
     outFile << "|               ns/op |                op/s |    err% |     total | benchmark\n";
     outFile << "|--------------------:|--------------------:|--------:|----------:|:----------\n";
 
+    /*
     for (auto const& ret : results) {
         outFile << "| " << std::setw(19) << std::right << ret.median(ankerl::nanobench::Result::Measure::elapsed) * static_cast<double>(1000000000)
                 << " | " << std::setw(19) << std::right << 1.0 / ret.median(ankerl::nanobench::Result::Measure::elapsed)
                 << " | " << std::setw(6) << std::right << ret.medianAbsolutePercentError(ankerl::nanobench::Result::Measure::elapsed) * 100.0 << "%"
+                << " | " << std::setw(9) << std::right << 0.0
+                << " | " << ret.config().mBenchmarkName << "\n";
+    }
+    */
+   //ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::elapsed]
+    for (auto const& ret : results) {
+        outFile << "| " << std::setw(19) << std::right << ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::elapsed].size()
+                << " | " << std::setw(19) << std::right << ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::elapsed][0]
+                << " | " << std::setw(6) << std::right << 0.0
                 << " | " << std::setw(9) << std::right << 0.0
                 << " | " << ret.config().mBenchmarkName << "\n";
     }
@@ -1807,6 +1816,9 @@ void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const
     benchFunction(bench);
 
     std::vector<ankerl::nanobench::Result> resultCopy = bench.results();
+    //resultCopy[0].mName
+
+    
 
     std::sort(resultCopy.begin(), resultCopy.end(),
         [](ankerl::nanobench::Result ret1, ankerl::nanobench::Result ret2)
@@ -1820,8 +1832,8 @@ void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const
 
 
 int main(int argc, char** argv) {
-    constexpr int iterations = 10000000;
-    //constexpr int iterations = 1000; //quick testing
+    //constexpr int iterations = 10000000;
+    constexpr int iterations = 1000; //quick testing
     // test_camera_matrix_funcs();
     // if (true) return 0;
     std::ofstream file("benchmark_results.txt", std::ios::trunc);

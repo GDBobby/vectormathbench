@@ -52,18 +52,12 @@ CPMAddPackage(
 CPMAddPackage(
   NAME LinearAlgebra
   GITHUB_REPOSITORY GDBobby/LinearAlgebra
-  GIT_TAG 16682919a4a2ee2404b1b477306e39d5fd88792c
+  GIT_TAG a9e78c34050b2d350d8f1674f0e84ca27a28e0d4
 )
-
-
+#message(STATUS ${LinearAlgebra_SOURCE_DIR})
 
 add_library(sony_vectormath INTERFACE)
 target_include_directories(sony_vectormath INTERFACE ${sony_vectormath_SOURCE_DIR})
-
-# add_library(LinearAlgebra INTERFACE)
-# add_library(LinearAlgebra-compile-options INTERFACE)
-message(STATUS ${LinearAlgebra_SOURCE_DIR})
-# target_include_directories(LinearAlgebra INTERFACE ${LinearAlgebra_SOURCE_DIR})
 
 add_library(vmb_common INTERFACE)
 target_link_libraries(vmb_common INTERFACE 

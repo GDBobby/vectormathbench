@@ -462,7 +462,6 @@ public:
     // Finds string, if not found, returns _size.
     static Measure fromString(std::string const& str);
 
-private:
     Config mConfig{};
     std::vector<std::vector<double>> mNameToMeasurements{};
 };
