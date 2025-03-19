@@ -134,10 +134,7 @@ endif()
 if(NOT vectormathbench_DEVELOPER_MODE)
   return()
 elseif(NOT PROJECT_IS_TOP_LEVEL)
-  message(
-      AUTHOR_WARNING
-      "Developer mode is intended for developers of vectormathbench"
-  )
+  message(AUTHOR_WARNING "Developer mode is intended for developers of vectormathbench")
 endif()
 
 include(cmake/dev-mode.cmake)
