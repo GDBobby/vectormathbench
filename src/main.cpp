@@ -1853,7 +1853,7 @@ int main() {
     // test_camera_matrix_funcs();
 
     std::random_device ran_dev{};
-    std::mt19937 ran_eng{ran_dev};
+    std::mt19937 ran_eng{ran_dev()};
     std::uniform_real_distribution<float> distri(-1000.f, 1000.f);
     random_float_values.clear();
     random_float_values.reserve(1000);
