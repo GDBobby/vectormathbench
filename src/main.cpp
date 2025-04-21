@@ -33,6 +33,20 @@ namespace std
 // Sony vectormath
 #include <vectormath.hpp>
 
+#include <random>
+
+uint64_t random_float_iter = 0;
+std::vector<float> random_float_values;
+
+float PullRandomFloatVal(){
+    float ret = random_float_values[random_float_iter];
+    random_float_iter = (random_float_iter + 1) % random_float_values.size();
+    return ret;
+}
+double PullRandomDoubleVal(){
+    return static_cast<double>(PullRandomFloatVal());
+}
+
 #include "sse/internal.hpp"
 #define ANKERL_NANOBENCH_IMPLEMENT
 #include "nanobench.h"
@@ -374,27 +388,27 @@ namespace mathbench
             bench.run("SimpleMath",
                 [&]
                 {
-                    results.smVec2 = DirectX::SimpleMath::Vector2(1.0f, 2.0f) +
-                                     DirectX::SimpleMath::Vector2(3.0f, 4.0f);
+                    results.smVec2 = DirectX::SimpleMath::Vector2(PullRandomFloatVal(), PullRandomFloatVal()) +
+                                     DirectX::SimpleMath::Vector2(PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.smVec2);
                 });
             bench.run("glm",
                 [&]
                 {
-                    results.glmVec2 = glm::vec2(1.0f, 2.0f) + glm::vec2(3.0f, 4.0f);
+                    results.glmVec2 = glm::vec2(PullRandomFloatVal(), PullRandomFloatVal()) + glm::vec2(PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.glmVec2);
                 });
             bench.run("LAB",
                 [&]
                 {
-                    results.labVec2 = LAB::Vector<float, 2>(1.f, 2.f) + LAB::Vector<float, 2>(3.f, 4.f);
+                    results.labVec2 = LAB::Vector<float, 2>(PullRandomFloatVal(), PullRandomFloatVal()) + LAB::Vector<float, 2>(PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.labVec2);
                 });
             bench.run("DirectX",
                 [&]
                 {
-                    DirectX::XMFLOAT2 lhs(1.0f, 2.0f);
-                    DirectX::XMFLOAT2 rhs(3.0f, 4.0f);
+                    DirectX::XMFLOAT2 lhs(PullRandomFloatVal(), PullRandomFloatVal());
+                    DirectX::XMFLOAT2 rhs(PullRandomFloatVal(), PullRandomFloatVal());
                     DirectX::XMVECTOR lhsVec = DirectX::XMLoadFloat2(&lhs);
                     DirectX::XMVECTOR rhsVec = DirectX::XMLoadFloat2(&rhs);
                     DirectX::XMVECTOR result =
@@ -406,22 +420,22 @@ namespace mathbench
             bench.run("Vectormath",
                 [&]
                 {
-                    results.sonyVec2 = Vectormath::Vector2(1.0f, 2.0f) +
-                                       Vectormath::Vector2(3.0f, 4.0f);
+                    results.sonyVec2 = Vectormath::Vector2(PullRandomFloatVal(), PullRandomFloatVal()) +
+                                       Vectormath::Vector2(PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.sonyVec2);
                 });
             bench.run("move (float)",
                 [&]
                 {
                     using namespace move::math;
-                    results.mvVec2f = vec2f(1.0f, 2.0f) + vec2f(3.0f, 4.0f);
+                    results.mvVec2f = vec2f(PullRandomFloatVal(), PullRandomFloatVal()) + vec2f(PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec2f);
                 });
             bench.run("move (double)",
                 [&]
                 {
                     using namespace move::math;
-                    results.mvVec2d = vec2d(1.0f, 2.0f) + vec2d(3.0f, 4.0f);
+                    results.mvVec2d = vec2d(PullRandomFloatVal(), PullRandomFloatVal()) + vec2d(PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec2d);
                 });
         }
@@ -432,30 +446,30 @@ namespace mathbench
                 [&]
                 {
                     results.smVec3 =
-                        DirectX::SimpleMath::Vector3(1.0f, 2.0f, 3.0f) +
-                        DirectX::SimpleMath::Vector3(3.0f, 4.0f, 5.0f);
+                        DirectX::SimpleMath::Vector3(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
+                        DirectX::SimpleMath::Vector3(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.smVec3);
                 });
             bench.run("glm",
                 [&]
                 {
-                    results.glmVec3 = glm::vec3(1.0f, 2.0f, 3.0f) +
-                                      glm::vec3(3.0f, 4.0f, 5.0f);
+                    results.glmVec3 = glm::vec3(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
+                                      glm::vec3(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.glmVec3);
                 });
             bench.run("LAB",
                 [&]
                 {
-                    results.labVec3 = LAB::Vector<float, 3>(1.f, 2.f, 3.f) +
-                                      LAB::Vector<float, 3>(3.f, 4.f, 5.f);
+                    results.labVec3 = LAB::Vector<float, 3>(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
+                                      LAB::Vector<float, 3>(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.labVec3);
                 });
 
             bench.run("DirectX",
                 [&]
                 {
-                    DirectX::XMFLOAT3 lhs(1.0f, 2.0f, 3.0f);
-                    DirectX::XMFLOAT3 rhs(3.0f, 4.0f, 5.0f);
+                    DirectX::XMFLOAT3 lhs(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    DirectX::XMFLOAT3 rhs(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     DirectX::XMVECTOR lhsVec = DirectX::XMLoadFloat3(&lhs);
                     DirectX::XMVECTOR rhsVec = DirectX::XMLoadFloat3(&rhs);
                     DirectX::XMVECTOR result =
@@ -468,8 +482,8 @@ namespace mathbench
             bench.run("Vectormath",
                 [&]
                 {
-                    results.sonyVec3 = Vectormath::Vector3(1.0f, 2.0f, 3.0f) +
-                                       Vectormath::Vector3(3.0f, 4.0f, 5.0f);
+                    results.sonyVec3 = Vectormath::Vector3(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
+                                       Vectormath::Vector3(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.sonyVec3);
                 });
 
@@ -478,7 +492,7 @@ namespace mathbench
                 {
                     using namespace move::math;
                     results.mvVec3f =
-                        vec3f(1.0f, 2.0f, 3.0f) + vec3f(3.0f, 4.0f, 5.0f);
+                        vec3f(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) + vec3f(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec3f);
                 });
 
@@ -487,7 +501,7 @@ namespace mathbench
                 {
                     using namespace move::math;
                     results.mvVec3d =
-                        vec3d(1.0f, 2.0f, 3.0f) + vec3d(3.0f, 4.0f, 5.0f);
+                        vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) + vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec3d);
                 });
         }
@@ -499,8 +513,8 @@ namespace mathbench
                 [&]
                 {
                     results.smVec4 =
-                        DirectX::SimpleMath::Vector4(1.0f, 2.0f, 3.0f, 4.0f) +
-                        DirectX::SimpleMath::Vector4(3.0f, 4.0f, 5.0f, 6.0f);
+                        DirectX::SimpleMath::Vector4(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
+                        DirectX::SimpleMath::Vector4(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.smVec4);
                 });
 
@@ -509,15 +523,15 @@ namespace mathbench
             bench.run("glm",
                 [&]
                 {
-                    results.glmVec4 = glm::vec4(1.0f, 2.0f, 3.0f, 4.0f) +
-                                      glm::vec4(3.0f, 4.0f, 5.0f, 6.0f);
+                    results.glmVec4 = glm::vec4(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
+                                      glm::vec4(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.glmVec4);
                 });
             bench.run("LAB",
                 [&]
                 {
-                    results.labVec4 = LAB::Vector<float, 4>(1.f, 2.f, 3.f, 4.f) +
-                                      LAB::Vector<float, 4>(3.f, 4.f, 5.f, 6.f);
+                    results.labVec4 = LAB::Vector<float, 4>(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
+                                      LAB::Vector<float, 4>(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.labVec4);
                 });
 
@@ -534,24 +548,24 @@ namespace mathbench
                 [&]
                 {
                     results.sonyVec4 =
-                        Vectormath::Vector4(1.0f, 2.0f, 3.0f, 4.0f) +
-                        Vectormath::Vector4(3.0f, 4.0f, 5.0f, 6.0f);
+                        Vectormath::Vector4(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
+                        Vectormath::Vector4(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.sonyVec4);
                 });
             bench.run("move (float)",
                 [&]
                 {
                     using namespace move::math;
-                    results.mvVec4f = vec4f(1.0f, 2.0f, 3.0f, 4.0f) +
-                                      vec4f(3.0f, 4.0f, 5.0f, 6.0f);
+                    results.mvVec4f = vec4f(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
+                                      vec4f(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec4f);
                 });
             bench.run("move (double)",
                 [&]
                 {
                     using namespace move::math;
-                    results.mvVec4d = vec4d(1.0f, 2.0f, 3.0f, 4.0f) +
-                                      vec4d(3.0f, 4.0f, 5.0f, 6.0f);
+                    results.mvVec4d = vec4d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
+                                      vec4d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec4d);
                 });
 
@@ -560,8 +574,8 @@ namespace mathbench
                 {
                     using namespace rtm;
                     results.rtmVec4f =
-                        rtm::vector_add(vector_set(1.0f, 2.0f, 3.0f, 4.0f),
-                            vector_set(3.0f, 4.0f, 5.0f, 6.0f));
+                        rtm::vector_add(vector_set(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()),
+                            vector_set(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()));
 
                     ankerl::nanobench::doNotOptimizeAway(results.rtmVec4f);
                 });
@@ -570,9 +584,8 @@ namespace mathbench
                 [&]
                 {
                     using namespace rtm;
-                    results.rtmVec4d =
-                        rtm::vector_add(vector_set(1.0, 2.0, 3.0, 4.0),
-                            vector_set(3.0, 4.0, 5.0, 6.0));
+                    results.rtmVec4d = rtm::vector_add(vector_set(PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal()),
+                            vector_set(PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal()));
 
                     ankerl::nanobench::doNotOptimizeAway(results.rtmVec4d);
                 });
@@ -583,12 +596,12 @@ namespace mathbench
             bench.run("SimpleMath",
                 [&]
                 {
-                    DirectX::SimpleMath::Vector2 vec2a(1.0f, 2.0f);
-                    DirectX::SimpleMath::Vector2 vec2b(3.0f, 4.0f);
-                    DirectX::SimpleMath::Vector3 vec3a(1.0f, 2.0f, 3.0f);
-                    DirectX::SimpleMath::Vector3 vec3b(3.0f, 4.0f, 5.0f);
-                    DirectX::SimpleMath::Vector4 vec4a(1.0f, 2.0f, 3.0f, 4.0f);
-                    DirectX::SimpleMath::Vector4 vec4b(3.0f, 4.0f, 5.0f, 6.0f);
+                    DirectX::SimpleMath::Vector2 vec2a(PullRandomFloatVal(), PullRandomFloatVal());
+                    DirectX::SimpleMath::Vector2 vec2b(PullRandomFloatVal(), PullRandomFloatVal());
+                    DirectX::SimpleMath::Vector3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    DirectX::SimpleMath::Vector3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    DirectX::SimpleMath::Vector4 vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    DirectX::SimpleMath::Vector4 vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     auto x = vec2a.Dot(vec2b);
                     auto y = vec3a.Cross(vec3b).Dot(vec3b);
@@ -602,12 +615,12 @@ namespace mathbench
             bench.run("glm",
                 [&]
                 {
-                    glm::vec2 vec2a(1.0f, 2.0f);
-                    glm::vec2 vec2b(3.0f, 4.0f);
-                    glm::vec3 vec3a(1.0f, 2.0f, 3.0f);
-                    glm::vec3 vec3b(3.0f, 4.0f, 5.0f);
-                    glm::vec4 vec4a(1.0f, 2.0f, 3.0f, 4.0f);
-                    glm::vec4 vec4b(3.0f, 4.0f, 5.0f, 6.0f);
+                    glm::vec2 vec2a(PullRandomFloatVal(), PullRandomFloatVal());
+                    glm::vec2 vec2b(PullRandomFloatVal(), PullRandomFloatVal());
+                    glm::vec3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    glm::vec3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    glm::vec4 vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    glm::vec4 vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     auto x = glm::dot(vec2a, vec2b);
                     auto y = glm::dot(glm::cross(vec3a, vec3b), vec3b);
@@ -620,12 +633,12 @@ namespace mathbench
             bench.run("LAB",
                 [&]
                 {
-                    LAB::Vector<float, 2> vec2a(1.0f, 2.0f);
-                    LAB::Vector<float, 2> vec2b(3.0f, 4.0f);
-                    LAB::Vector<float, 3> vec3a(1.0f, 2.0f, 3.0f);
-                    LAB::Vector<float, 3> vec3b(3.0f, 4.0f, 5.0f);
-                    LAB::Vector<float, 4> vec4a(1.0f, 2.0f, 3.0f, 4.0f);
-                    LAB::Vector<float, 4> vec4b(3.0f, 4.0f, 5.0f, 6.0f);
+                    LAB::Vector<float, 2> vec2a(PullRandomFloatVal(), PullRandomFloatVal());
+                    LAB::Vector<float, 2> vec2b(PullRandomFloatVal(), PullRandomFloatVal());
+                    LAB::Vector<float, 3> vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    LAB::Vector<float, 3> vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    LAB::Vector<float, 4> vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    LAB::Vector<float, 4> vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     auto x = vec2a.DotProduct(vec2b);
                     auto y = LAB::DotProduct(LAB::CrossProduct(vec3a, vec3b), vec3b);
@@ -640,12 +653,12 @@ namespace mathbench
                 [&]
                 {
                     using namespace DirectX;
-                    XMFLOAT2 vec2a(1.0f, 2.0f);
-                    XMFLOAT2 vec2b(3.0f, 4.0f);
-                    XMFLOAT3 vec3a(1.0f, 2.0f, 3.0f);
-                    XMFLOAT3 vec3b(3.0f, 4.0f, 5.0f);
-                    XMFLOAT4 vec4a(1.0f, 2.0f, 3.0f, 4.0f);
-                    XMFLOAT4 vec4b(3.0f, 4.0f, 5.0f, 6.0f);
+                    XMFLOAT2 vec2a(PullRandomFloatVal(), PullRandomFloatVal());
+                    XMFLOAT2 vec2b(PullRandomFloatVal(), PullRandomFloatVal());
+                    XMFLOAT3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    XMFLOAT3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    XMFLOAT4 vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    XMFLOAT4 vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     XMVECTOR vec2aVec = XMLoadFloat2(&vec2a);
                     XMVECTOR vec2bVec = XMLoadFloat2(&vec2b);
@@ -667,12 +680,12 @@ namespace mathbench
 
             {
                 using namespace DirectX;
-                XMFLOAT2 vec2a(1.0f, 2.0f);
-                XMFLOAT2 vec2b(3.0f, 4.0f);
-                XMFLOAT3 vec3a(1.0f, 2.0f, 3.0f);
-                XMFLOAT3 vec3b(3.0f, 4.0f, 5.0f);
-                XMFLOAT4 vec4a(1.0f, 2.0f, 3.0f, 4.0f);
-                XMFLOAT4 vec4b(3.0f, 4.0f, 5.0f, 6.0f);
+                XMFLOAT2 vec2a(PullRandomFloatVal(), PullRandomFloatVal());
+                XMFLOAT2 vec2b(PullRandomFloatVal(), PullRandomFloatVal());
+                XMFLOAT3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                XMFLOAT3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                XMFLOAT4 vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                XMFLOAT4 vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                 bench.run("DXM w/out loads",
                     [&]
                     {
@@ -699,12 +712,12 @@ namespace mathbench
                 [&]
                 {
                     using namespace Vectormath;
-                    Vector2 vec2a(1.0f, 2.0f);
-                    Vector2 vec2b(3.0f, 4.0f);
-                    Vector3 vec3a(1.0f, 2.0f, 3.0f);
-                    Vector3 vec3b(3.0f, 4.0f, 5.0f);
-                    Vector4 vec4a(1.0f, 2.0f, 3.0f, 4.0f);
-                    Vector4 vec4b(3.0f, 4.0f, 5.0f, 6.0f);
+                    Vector2 vec2a(PullRandomFloatVal(), PullRandomFloatVal());
+                    Vector2 vec2b(PullRandomFloatVal(), PullRandomFloatVal());
+                    Vector3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    Vector3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    Vector4 vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    Vector4 vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     auto x = dot(vec2a, vec2b);
                     auto y = dot(cross(vec3a, vec3b), vec3b);
@@ -719,12 +732,12 @@ namespace mathbench
                 [&]
                 {
                     using namespace move::math;
-                    vec2f vec2a(1.0f, 2.0f);
-                    vec2f vec2b(3.0f, 4.0f);
-                    vec3f vec3a(1.0f, 2.0f, 3.0f);
-                    vec3f vec3b(3.0f, 4.0f, 5.0f);
-                    vec4f vec4a(1.0f, 2.0f, 3.0f, 4.0f);
-                    vec4f vec4b(3.0f, 4.0f, 5.0f, 6.0f);
+                    vec2f vec2a(PullRandomFloatVal(), PullRandomFloatVal());
+                    vec2f vec2b(PullRandomFloatVal(), PullRandomFloatVal());
+                    vec3f vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec3f vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec4f vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec4f vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     auto x = vec2f::dot(vec2a, vec2b);
                     auto y = vec3f::dot(vec3f::cross(vec3a, vec3b), vec3b);
@@ -739,12 +752,12 @@ namespace mathbench
                 [&]
                 {
                     using namespace move::math;
-                    vec2d vec2a(1.0f, 2.0f);
-                    vec2d vec2b(3.0f, 4.0f);
-                    vec3d vec3a(1.0f, 2.0f, 3.0f);
-                    vec3d vec3b(3.0f, 4.0f, 5.0f);
-                    vec4d vec4a(1.0f, 2.0f, 3.0f, 4.0f);
-                    vec4d vec4b(3.0f, 4.0f, 5.0f, 6.0f);
+                    vec2d vec2a(PullRandomFloatVal(), PullRandomFloatVal());
+                    vec2d vec2b(PullRandomFloatVal(), PullRandomFloatVal());
+                    vec3d vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec3d vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec4d vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec4d vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     auto x = vec2d::dot(vec2a, vec2b);
                     auto y = vec3d::dot(vec3d::cross(vec3a, vec3b), vec3b);
@@ -761,10 +774,10 @@ namespace mathbench
             bench.run("SimpleMath",
                 [&]
                 {
-                    DirectX::SimpleMath::Vector3 vec3a(1.0f, 2.0f, 3.0f);
-                    DirectX::SimpleMath::Vector3 vec3b(3.0f, 4.0f, 5.0f);
-                    DirectX::SimpleMath::Vector3 vec3c(5.0f, 6.0f, 7.0f);
-                    DirectX::SimpleMath::Vector3 vec3d(7.0f, 8.0f, 9.0f);
+                    DirectX::SimpleMath::Vector3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    DirectX::SimpleMath::Vector3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    DirectX::SimpleMath::Vector3 vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    DirectX::SimpleMath::Vector3 vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     results.smVec3 =
                         ((vec3a + vec3b) * vec3c - vec3d).Cross(vec3a);
@@ -774,10 +787,10 @@ namespace mathbench
             bench.run("glm",
                 [&]
                 {
-                    glm::vec3 vec3a(1.0f, 2.0f, 3.0f);
-                    glm::vec3 vec3b(3.0f, 4.0f, 5.0f);
-                    glm::vec3 vec3c(5.0f, 6.0f, 7.0f);
-                    glm::vec3 vec3d(7.0f, 8.0f, 9.0f);
+                    glm::vec3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    glm::vec3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    glm::vec3 vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    glm::vec3 vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     results.glmVec3 =
                         glm::cross((vec3a + vec3b) * vec3c - vec3d, vec3a);
@@ -786,10 +799,10 @@ namespace mathbench
             bench.run("LAB",
                 [&]
                 {
-                    LAB::Vector<float, 3> vec3a(1.0f, 2.0f, 3.0f);
-                    LAB::Vector<float, 3> vec3b(3.0f, 4.0f, 5.0f);
-                    LAB::Vector<float, 3> vec3c(5.0f, 6.0f, 7.0f);
-                    LAB::Vector<float, 3> vec3d(7.0f, 8.0f, 9.0f);
+                    LAB::Vector<float, 3> vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    LAB::Vector<float, 3> vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    LAB::Vector<float, 3> vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    LAB::Vector<float, 3> vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     //LAB::CrossProduct();
                     results.labVec3 = LAB::CrossProduct((vec3a + vec3b) * vec3c - vec3d, vec3a);
@@ -800,10 +813,10 @@ namespace mathbench
                 [&]
                 {
                     using namespace DirectX;
-                    XMFLOAT3 vec3a(1.0f, 2.0f, 3.0f);
-                    XMFLOAT3 vec3b(3.0f, 4.0f, 5.0f);
-                    XMFLOAT3 vec3c(5.0f, 6.0f, 7.0f);
-                    XMFLOAT3 vec3d(7.0f, 8.0f, 9.0f);
+                    XMFLOAT3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    XMFLOAT3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    XMFLOAT3 vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    XMFLOAT3 vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     XMVECTOR vec3aVec = XMLoadFloat3(&vec3a);
                     XMVECTOR vec3bVec = XMLoadFloat3(&vec3b);
@@ -824,10 +837,10 @@ namespace mathbench
             {
                 using namespace DirectX;
 
-                XMFLOAT3 vec3a(1.0f, 2.0f, 3.0f);
-                XMFLOAT3 vec3b(3.0f, 4.0f, 5.0f);
-                XMFLOAT3 vec3c(5.0f, 6.0f, 7.0f);
-                XMFLOAT3 vec3d(7.0f, 8.0f, 9.0f);
+                XMFLOAT3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                XMFLOAT3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                XMFLOAT3 vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                XMFLOAT3 vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                 XMVECTOR vec3aVec = XMLoadFloat3(&vec3a);
                 XMVECTOR vec3bVec = XMLoadFloat3(&vec3b);
                 XMVECTOR vec3cVec = XMLoadFloat3(&vec3c);
@@ -851,10 +864,10 @@ namespace mathbench
                 [&]
                 {
                     using namespace Vectormath;
-                    Vector3 vec3a(1.0f, 2.0f, 3.0f);
-                    Vector3 vec3b(3.0f, 4.0f, 5.0f);
-                    Vector3 vec3c(5.0f, 6.0f, 7.0f);
-                    Vector3 vec3d(7.0f, 8.0f, 9.0f);
+                    Vector3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    Vector3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    Vector3 vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    Vector3 vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     auto stepOne = (vec3a + vec3b);
                     auto stepTwo = vec3c - vec3d;
@@ -873,10 +886,10 @@ namespace mathbench
                 [&]
                 {
                     using namespace move::math;
-                    vec3f vec3a(1.0f, 2.0f, 3.0f);
-                    vec3f vec3b(3.0f, 4.0f, 5.0f);
-                    vec3f vec3c(5.0f, 6.0f, 7.0f);
-                    vec3f vec3d(7.0f, 8.0f, 9.0f);
+                    vec3f vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec3f vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec3f vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec3f vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     auto stepOne = (vec3a + vec3b);
                     auto stepTwo = vec3c - vec3d;
@@ -889,10 +902,10 @@ namespace mathbench
                 [&]
                 {
                     using namespace move::math;
-                    vec3d vec3a(1.0f, 2.0f, 3.0f);
-                    vec3d vec3b(3.0f, 4.0f, 5.0f);
-                    vec3d vec3c(5.0f, 6.0f, 7.0f);
-                    vec3d vec3d(7.0f, 8.0f, 9.0f);
+                    vec3d vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec3d vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec3d vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec3d vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     auto stepOne = (vec3a + vec3b);
                     auto stepTwo = vec3c - vec3d;
@@ -907,10 +920,10 @@ namespace mathbench
             bench.run("SimpleMath",
                 [&]
                 {
-                    DirectX::SimpleMath::Vector4 vec3a(1.0f, 2.0f, 3.0f, 4.0f);
-                    DirectX::SimpleMath::Vector4 vec3b(3.0f, 4.0f, 5.0f, 6.0f);
-                    DirectX::SimpleMath::Vector4 vec3c(5.0f, 6.0f, 7.0f, 8.0f);
-                    DirectX::SimpleMath::Vector4 vec3d(7.0f, 8.0f, 9.0f, 10.0f);
+                    DirectX::SimpleMath::Vector4 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    DirectX::SimpleMath::Vector4 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    DirectX::SimpleMath::Vector4 vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    DirectX::SimpleMath::Vector4 vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     results.smVec4 = ((vec3a + vec3b) * vec3c - vec3d);
                     ankerl::nanobench::doNotOptimizeAway(results.smVec4);
@@ -919,10 +932,10 @@ namespace mathbench
             bench.run("glm",
                 [&]
                 {
-                    glm::vec4 vec3a(1.0f, 2.0f, 3.0f, 4.0f);
-                    glm::vec4 vec3b(3.0f, 4.0f, 5.0f, 6.0f);
-                    glm::vec4 vec3c(5.0f, 6.0f, 7.0f, 8.0f);
-                    glm::vec4 vec3d(7.0f, 8.0f, 9.0f, 10.0f);
+                    glm::vec4 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    glm::vec4 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    glm::vec4 vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    glm::vec4 vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     results.glmVec4 = (vec3a + vec3b) * vec3c - vec3d;
                     ankerl::nanobench::doNotOptimizeAway(results.glmVec4);
@@ -930,10 +943,10 @@ namespace mathbench
             bench.run("LAB",
                 [&]
                 {
-                    LAB::Vector<float, 4> vec3a(1.0f, 2.0f, 3.0f, 4.0f);
-                    LAB::Vector<float, 4> vec3b(3.0f, 4.0f, 5.0f, 6.0f);
-                    LAB::Vector<float, 4> vec3c(5.0f, 6.0f, 7.0f, 8.0f);
-                    LAB::Vector<float, 4> vec3d(7.0f, 8.0f, 9.0f, 10.0f);
+                    LAB::Vector<float, 4> vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    LAB::Vector<float, 4> vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    LAB::Vector<float, 4> vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    LAB::Vector<float, 4> vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     results.labVec4 = (vec3a + vec3b) * vec3c - vec3d;
                     ankerl::nanobench::doNotOptimizeAway(results.labVec4);
@@ -943,10 +956,10 @@ namespace mathbench
                 [&]
                 {
                     using namespace DirectX;
-                    XMFLOAT4 vec3a(1.0f, 2.0f, 3.0f, 4.0f);
-                    XMFLOAT4 vec3b(3.0f, 4.0f, 5.0f, 6.0f);
-                    XMFLOAT4 vec3c(5.0f, 6.0f, 7.0f, 8.0f);
-                    XMFLOAT4 vec3d(7.0f, 8.0f, 9.0f, 10.0f);
+                    XMFLOAT4 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    XMFLOAT4 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    XMFLOAT4 vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    XMFLOAT4 vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     XMVECTOR vec3aVec = XMLoadFloat4(&vec3a);
                     XMVECTOR vec3bVec = XMLoadFloat4(&vec3b);
@@ -965,10 +978,10 @@ namespace mathbench
             {
                 using namespace DirectX;
 
-                XMFLOAT4 vec3a(1.0f, 2.0f, 3.0f, 4.0f);
-                XMFLOAT4 vec3b(3.0f, 4.0f, 5.0f, 6.0f);
-                XMFLOAT4 vec3c(5.0f, 6.0f, 7.0f, 8.0f);
-                XMFLOAT4 vec3d(7.0f, 8.0f, 9.0f, 10.0f);
+                XMFLOAT4 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                XMFLOAT4 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                XMFLOAT4 vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                XMFLOAT4 vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                 XMVECTOR vec3aVec = XMLoadFloat4(&vec3a);
                 XMVECTOR vec3bVec = XMLoadFloat4(&vec3b);
                 XMVECTOR vec3cVec = XMLoadFloat4(&vec3c);
@@ -990,10 +1003,10 @@ namespace mathbench
                 [&]
                 {
                     using namespace Vectormath;
-                    Vector4 vec4a(1.0f, 2.0f, 3.0f, 4.0f);
-                    Vector4 vec4b(3.0f, 4.0f, 5.0f, 6.0f);
-                    Vector4 vec4c(5.0f, 6.0f, 7.0f, 8.0f);
-                    Vector4 vec4d(7.0f, 8.0f, 9.0f, 10.0f);
+                    Vector4 vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    Vector4 vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    Vector4 vec4c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    Vector4 vec4d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     Vector4 stepOne = (vec4a + vec4b);
                     Vector4 stepTwo = Vector4(stepOne.getX() * vec4c.getX(),
@@ -1009,10 +1022,10 @@ namespace mathbench
                 [&]
                 {
                     using namespace move::math;
-                    vec4f vec4a(1.0f, 2.0f, 3.0f, 4.0f);
-                    vec4f vec4b(3.0f, 4.0f, 5.0f, 6.0f);
-                    vec4f vec4c(5.0f, 6.0f, 7.0f, 8.0f);
-                    vec4f vec4dd(7.0f, 8.0f, 9.0f, 10.0f);
+                    vec4f vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec4f vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec4f vec4c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec4f vec4dd(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     results.mvVec4f = (vec4a + vec4b) * vec4c - vec4dd;
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec4f);
@@ -1022,10 +1035,10 @@ namespace mathbench
                 [&]
                 {
                     using namespace move::math;
-                    vec4d vec4a(1.0f, 2.0f, 3.0f, 4.0f);
-                    vec4d vec4b(3.0f, 4.0f, 5.0f, 6.0f);
-                    vec4d vec4c(5.0f, 6.0f, 7.0f, 8.0f);
-                    vec4d vec4dd(7.0f, 8.0f, 9.0f, 10.0f);
+                    vec4d vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec4d vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec4d vec4c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vec4d vec4dd(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     results.mvVec4d = (vec4a + vec4b) * vec4c - vec4dd;
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec4d);
@@ -1035,13 +1048,12 @@ namespace mathbench
                 [&]
                 {
                     using namespace rtm;
-                    vector4f vec4a = vector_set(1.0f, 2.0f, 3.0f, 4.0f);
-                    vector4f vec4b = vector_set(3.0f, 4.0f, 5.0f, 6.0f);
-                    vector4f vec4c = vector_set(5.0f, 6.0f, 7.0f, 8.0f);
-                    vector4f vec4d = vector_set(7.0f, 8.0f, 9.0f, 10.0f);
+                    vector4f vec4a = vector_set(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vector4f vec4b = vector_set(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vector4f vec4c = vector_set(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    vector4f vec4d = vector_set(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
-                    vector4f stepOne =
-                        vector_mul(vector_add(vec4a, vec4b), vec4c);
+                    vector4f stepOne = vector_mul(vector_add(vec4a, vec4b), vec4c);
                     vector4f stepTwo = vector_sub(stepOne, vec4d);
 
                     results.rtmVec4f = stepTwo;
@@ -1052,13 +1064,12 @@ namespace mathbench
                 [&]
                 {
                     using namespace rtm;
-                    vector4d vec4a = vector_set(1.0, 2.0, 3.0, 4.0);
-                    vector4d vec4b = vector_set(3.0, 4.0, 5.0, 6.0);
-                    vector4d vec4c = vector_set(5.0, 6.0, 7.0, 8.0);
-                    vector4d vec4d = vector_set(7.0, 8.0, 9.0, 10.0);
+                    vector4d vec4a = vector_set(PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal());
+                    vector4d vec4b = vector_set(PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal());
+                    vector4d vec4c = vector_set(PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal());
+                    vector4d vec4d = vector_set(PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal());
 
-                    vector4d stepOne =
-                        vector_mul(vector_add(vec4a, vec4b), vec4c);
+                    vector4d stepOne = vector_mul(vector_add(vec4a, vec4b), vec4c);
                     vector4d stepTwo = vector_sub(stepOne, vec4d);
 
                     results.rtmVec4d = stepTwo;
@@ -1545,8 +1556,7 @@ namespace mathbench
             bench.run("SimpleMath",
                 [&]
                 {
-                    results.smVec4 = DirectX::SimpleMath::Vector4::Transform(
-                        results.smVec4, results.smMat4a);
+                    results.smVec4 = DirectX::SimpleMath::Vector4::Transform(results.smVec4, results.smMat4a);
                     ankerl::nanobench::doNotOptimizeAway(results.smVec4);
                 });
 
@@ -1566,8 +1576,7 @@ namespace mathbench
                 [&]
                 {
                     using namespace DirectX;
-                    results.dxVecA =
-                        XMVector4Transform(results.dxVecA, results.dxMatA);
+                    results.dxVecA = XMVector4Transform(results.dxVecA, results.dxMatA);
                     XMStoreFloat4(&results.dxVec4, results.dxVecA);
                     ankerl::nanobench::doNotOptimizeAway(results.dxVec4);
                 });
@@ -1600,17 +1609,16 @@ namespace mathbench
                 [&]
                 {
                     using namespace rtm;
-                    results.rtmVec4f = matrix_mul_vector(
-                        results.rtmVec4fa, results.rtmMat4x4fa);
+                    results.rtmVec4f = matrix_mul_vector(results.rtmVec4fa, results.rtmMat4x4fa);
                     ankerl::nanobench::doNotOptimizeAway(results.rtmVec4f);
                 });
+                        
 
             bench.run("rtm::matrix4x4d",
                 [&]
                 {
                     using namespace rtm;
-                    results.rtmVec4d = matrix_mul_vector(
-                        results.rtmVec4da, results.rtmMat4x4da);
+                    results.rtmVec4d = matrix_mul_vector(results.rtmVec4da, results.rtmMat4x4da);
                     ankerl::nanobench::doNotOptimizeAway(results.rtmVec4d);
                 });
 
@@ -1628,8 +1636,7 @@ namespace mathbench
                 [&]
                 {
                     using namespace rtm;
-                    results.rtmVec4d =
-                        qvv_mul_point3(results.rtmVec4da, results.rtmQvvd);
+                    results.rtmVec4d = qvv_mul_point3(results.rtmVec4da, results.rtmQvvd);
 
                     ankerl::nanobench::doNotOptimizeAway(results.rtmVec4d);
                 });
@@ -1663,8 +1670,7 @@ namespace mathbench
                 {
                     using namespace DirectX;
 
-                    results.dxMatA =
-                        XMMatrixMultiply(results.dxMatB, results.dxMatC);
+                    results.dxMatA = XMMatrixMultiply(results.dxMatB, results.dxMatC);
                     ankerl::nanobench::doNotOptimizeAway(results.dxMatA);
                 });
 
@@ -1680,8 +1686,7 @@ namespace mathbench
                 [&]
                 {
                     using namespace move::math;
-                    results.mvMat4x4fa =
-                        results.mvMat4x4fb * results.mvMat4x4fc;
+                    results.mvMat4x4fa = results.mvMat4x4fb * results.mvMat4x4fc;
                     ankerl::nanobench::doNotOptimizeAway(results.mvMat4x4fa);
                 });
 
@@ -1689,8 +1694,7 @@ namespace mathbench
                 [&]
                 {
                     using namespace move::math;
-                    results.mvMat4x4da =
-                        results.mvMat4x4db * results.mvMat4x4dc;
+                    results.mvMat4x4da = results.mvMat4x4db * results.mvMat4x4dc;
                     ankerl::nanobench::doNotOptimizeAway(results.mvMat4x4da);
                 });
 
@@ -1698,8 +1702,7 @@ namespace mathbench
                 [&]
                 {
                     using namespace rtm;
-                    results.rtmQvvfa =
-                        qvv_mul(results.rtmQvvfb, results.rtmQvvfc);
+                    results.rtmQvvfa = qvv_mul(results.rtmQvvfb, results.rtmQvvfc);
                     ankerl::nanobench::doNotOptimizeAway(results.rtmQvvf);
                 });
 
@@ -1707,8 +1710,7 @@ namespace mathbench
                 [&]
                 {
                     using namespace rtm;
-                    results.rtmQvvda =
-                        qvv_mul(results.rtmQvvdb, results.rtmQvvdc);
+                    results.rtmQvvda = qvv_mul(results.rtmQvvdb, results.rtmQvvdc);
                     ankerl::nanobench::doNotOptimizeAway(results.rtmQvvda);
                 });
 
@@ -1716,8 +1718,7 @@ namespace mathbench
                 [&]
                 {
                     using namespace rtm;
-                    results.rtmMat4x4fa =
-                        matrix_mul(results.rtmMat4x4fb, results.rtmMat4x4fc);
+                    results.rtmMat4x4fa = matrix_mul(results.rtmMat4x4fb, results.rtmMat4x4fc);
                     ankerl::nanobench::doNotOptimizeAway(results.rtmMat4x4fa);
                 });
 
@@ -1725,8 +1726,7 @@ namespace mathbench
                 [&]
                 {
                     using namespace rtm;
-                    results.rtmMat4x4da =
-                        matrix_mul(results.rtmMat4x4db, results.rtmMat4x4dc);
+                    results.rtmMat4x4da = matrix_mul(results.rtmMat4x4db, results.rtmMat4x4dc);
                     ankerl::nanobench::doNotOptimizeAway(results.rtmMat4x4da);
                 });
         }
@@ -1735,8 +1735,7 @@ namespace mathbench
 
 inline void test_camera_matrix_funcs()
 {
-    auto smMat = DirectX::SimpleMath::Matrix::CreateOrthographic(
-        0.5f, 1.0f, 0.1f, 100.0f);
+    auto smMat = DirectX::SimpleMath::Matrix::CreateOrthographic(0.5f, 1.0f, 0.1f, 100.0f);
     auto glmMat = glm::ortho(0.5f, 1.0f, 0.1f, 100.0f);
     auto rtmMat = rtm::camera::ortho_rh(0.5f, 1.0f, 0.1f, 100.0f);
 
@@ -1849,9 +1848,19 @@ void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const
 
 
 int main() {
-    constexpr int iterations = 1000000;
-    //constexpr int iterations = 1000; //quick testing
+    //constexpr int iterations = 1000000;
+    constexpr int iterations = 1000; //quick testing
     // test_camera_matrix_funcs();
+
+    std::random_device ran_dev{};
+    std::mt19937 ran_eng{ran_dev};
+    std::uniform_real_distribution<float> distri(-1000.f, 1000.f);
+    random_float_values.clear();
+    random_float_values.reserve(1000);
+    for(uint64_t i = 0; i < 1000; i++){
+        random_float_values.push_back(distri(ran_eng));
+    }
+
     std::ofstream file("benchmark_results.txt", std::ios::trunc);
     file << std::fixed << std::setprecision(2);
 
@@ -1861,12 +1870,13 @@ int main() {
             ankerl::nanobench::Bench noopBench;
             noopBench.name("noop");
             noopBench.minEpochIterations(iterations);
-            int intnum;
+            float floatnum;
             noopBench.run("Store int (reference 'no-op')",
                 [&]
                 {
-                    intnum = 0;
-                    ankerl::nanobench::doNotOptimizeAway(intnum);
+                    floatnum = random_float_values[random_float_iter];
+                    random_float_iter = (random_float_iter + 1) % random_float_values.size();
+                    ankerl::nanobench::doNotOptimizeAway(floatnum);
                 });
             auto resultCopy = noopBench.results();
             WriteTable(file, "no-op", resultCopy);
