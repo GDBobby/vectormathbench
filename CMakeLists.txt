@@ -29,7 +29,7 @@ include(cmake/cpm.cmake)
 # ---- Declare executable ----
 
 
-CPMAddPackage("gh:g-truc/glm#0.9.9.8@0.9.9.8")
+CPMAddPackage("gh:g-truc/glm#1.0.1@1.0.1")
 CPMAddPackage("gh:microsoft/DirectXMath#dec2022")
 CPMAddPackage("gh:move-engine/move-vectormath#33673bec3f7910cd6d23fb20f516f9cd6cad8421")
 
