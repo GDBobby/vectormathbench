@@ -82,6 +82,7 @@ jobs:
       run: |
         echo "# Benchmark Results (ubuntu-latest)" > ubuntu_benchmark.md
         echo "" >> ubuntu_benchmark.md
+        echo "Generated on: $(date '+%Y-%m-%d %H:%M:%S')" >> ubuntu_benchmark.md
 
         echo ## System Info >> ubuntu_benchmark.md
         echo CPU: $(lscpu | grep "Model name" | sed -e 's/Model name: *//') >> ubuntu_benchmark.md
@@ -151,6 +152,9 @@ jobs:
           
           echo # Benchmark Results (windows-2022) > windows_benchmark.md
           echo Full Path: %cd%\windows_benchmark.md
+          echo. >> windows_benchmark.md
+
+          echo Generated on: %date% at %time% >> windows_benchmark.md
           echo. >> windows_benchmark.md
           
           echo ## System Info >> windows_benchmark.md

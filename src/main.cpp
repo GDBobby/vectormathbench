@@ -381,15 +381,13 @@ namespace mathbench
             bench.run("glm",
                 [&]
                 {
-                    results.glmVec2 =
-                        glm::vec2(1.0f, 2.0f) + glm::vec2(3.0f, 4.0f);
+                    results.glmVec2 = glm::vec2(1.0f, 2.0f) + glm::vec2(3.0f, 4.0f);
                     ankerl::nanobench::doNotOptimizeAway(results.glmVec2);
                 });
             bench.run("LAB",
                 [&]
                 {
-                    results.labVec2 = LAB::Vector<float, 2>(1.f, 2.f) +
-                                      LAB::Vector<float, 2>(3.f, 4.f);
+                    results.labVec2 = LAB::Vector<float, 2>(1.f, 2.f) + LAB::Vector<float, 2>(3.f, 4.f);
                     ankerl::nanobench::doNotOptimizeAway(results.labVec2);
                 });
             bench.run("DirectX",
@@ -1105,13 +1103,11 @@ namespace mathbench
             bench.run("LAB (~transformation matrix)",
                 [&]
                 {
-                    LAB::Transform<float, 3> transform{
+                    results.labMat4a = LAB::Transform<float, 3>{
                         LAB::Vector<float, 3>(1.0f, 2.0f, 3.0f), //translation
                         LAB::Vector<float, 3>(0.5f, 0.5f, 0.5f), //rotation,
                         LAB::Vector<float, 3>(1.f, 2.f, 3.f) //scale
-                    };
-
-                    results.labMat4a = transform.GetMatrix();
+                    }.GetMatrix();
                     ankerl::nanobench::doNotOptimizeAway(results.labMat4a);
                 });
 
@@ -1395,8 +1391,7 @@ namespace mathbench
             bench.run("glm",
                 [&]
                 {
-                    results.glmMat4a =
-                        glm::perspective(0.5f, 1.0f, 0.1f, 100.0f);
+                    results.glmMat4a = glm::perspective(0.5f, 1.0f, 0.1f, 100.0f);
                     ankerl::nanobench::doNotOptimizeAway(results.glmMat4a);
                 });
             bench.run("LAB",
@@ -1826,6 +1821,7 @@ void WriteTable(std::ofstream& outFile, const std::string& section_name, std::ve
         empBack.libName = ret.config().mBenchmarkName;
     }
     std::sort(sortedResults.begin(), sortedResults.end(), [](auto left, auto right) {return left.median < right.median; });
+
     for (auto& ret : sortedResults) {
         outFile
             << "| " << std::setw(19) << std::right << ret.median
@@ -1853,7 +1849,7 @@ void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const
 
 
 int main() {
-    //constexpr int iterations = 10000000;
+    //constexpr int iterations = 1000000;
     constexpr int iterations = 1000; //quick testing
     // test_camera_matrix_funcs();
     std::ofstream file("benchmark_results.txt", std::ios::trunc);
@@ -1875,14 +1871,14 @@ int main() {
             auto resultCopy = noopBench.results();
             WriteTable(file, "no-op", resultCopy);
         }
-        BenchmarkWrapper("vector 2", file, iterations, mathbench::vectors::addition2);
+        BenchmarkWrapper("vec2 add", file, iterations, mathbench::vectors::addition2);
 //this is here for quick testing. just toggle 0 to 1 for quick enable/disable
 #if 1
-        BenchmarkWrapper("vector 3", file, iterations, mathbench::vectors::addition3);
-        BenchmarkWrapper("vector 4", file, iterations, mathbench::vectors::addition4);
-        BenchmarkWrapper("complex1", file, iterations, mathbench::vectors::complex1);
-        BenchmarkWrapper("complex2 vec3", file, iterations, mathbench::vectors::complex2vec3);
-        BenchmarkWrapper("complex3 vec4", file, iterations, mathbench::vectors::complex3vec4);
+        BenchmarkWrapper("vec3 add", file, iterations, mathbench::vectors::addition3);
+        BenchmarkWrapper("vec4 add", file, iterations, mathbench::vectors::addition4);
+        BenchmarkWrapper("dot and cross", file, iterations, mathbench::vectors::complex1);
+        BenchmarkWrapper("add sub multi cross vec3", file, iterations, mathbench::vectors::complex2vec3);
+        BenchmarkWrapper("add sub multi vec4", file, iterations, mathbench::vectors::complex3vec4);
 
         BenchmarkWrapper("model matrix", file, iterations, mathbench::matrices::construct_model_matrix);
         BenchmarkWrapper("view matrix", file, iterations, mathbench::matrices::construct_view_matrix);
