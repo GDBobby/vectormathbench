@@ -1689,7 +1689,21 @@ int main() {
             noopBench.name("noop");
             noopBench.minEpochIterations(iterations);
             float floatnum;
-            noopBench.run("Store int (reference 'no-op')",
+            noopBench.run("Store float (reference 'no-op')",
+                [&]
+                {
+                    floatnum = 0.f;
+                    ankerl::nanobench::doNotOptimizeAway(floatnum);
+                });
+            auto resultCopy = noopBench.results();
+            WriteTable(file, "no-op", resultCopy);
+        }
+        {
+            ankerl::nanobench::Bench noopBench;
+            noopBench.name("noop");
+            noopBench.minEpochIterations(iterations);
+            float floatnum;
+            noopBench.run("Pull (1) Random Float And Store (reference 'no-op')",
                 [&]
                 {
                     floatnum = random_float_values[random_float_iter];
@@ -1697,7 +1711,49 @@ int main() {
                     ankerl::nanobench::doNotOptimizeAway(floatnum);
                 });
             auto resultCopy = noopBench.results();
-            WriteTable(file, "no-op", resultCopy);
+            WriteTable(file, "no-op (r1)", resultCopy);
+        }
+        {
+            ankerl::nanobench::Bench noopBench;
+            noopBench.name("noop");
+            noopBench.minEpochIterations(iterations);
+            float floatnum;
+            noopBench.run("Pull (2) Random Float And Store (reference 'no-op')",
+                [&]
+                {
+                    floatnum = PullRandomFloatVal() + PullRandomFloatVal();
+                    ankerl::nanobench::doNotOptimizeAway(floatnum);
+                });
+            auto resultCopy = noopBench.results();
+            WriteTable(file, "no-op (r2)", resultCopy);
+        }
+        {
+            ankerl::nanobench::Bench noopBench;
+            noopBench.name("noop");
+            noopBench.minEpochIterations(iterations);
+            float floatnum;
+            noopBench.run("Pull (3) Random Float And Store (reference 'no-op')",
+                [&]
+                {
+                    floatnum = PullRandomFloatVal() + PullRandomFloatVal() + PullRandomFloatVal();
+                    ankerl::nanobench::doNotOptimizeAway(floatnum);
+                });
+            auto resultCopy = noopBench.results();
+            WriteTable(file, "no-op (r3)", resultCopy);
+        }
+        {
+            ankerl::nanobench::Bench noopBench;
+            noopBench.name("noop");
+            noopBench.minEpochIterations(iterations);
+            float floatnum;
+            noopBench.run("Pull (4) Random Float And Store (reference 'no-op')",
+                [&]
+                {
+                    floatnum = PullRandomFloatVal() + PullRandomFloatVal() + PullRandomFloatVal() + PullRandomFloatVal();
+                    ankerl::nanobench::doNotOptimizeAway(floatnum);
+                });
+            auto resultCopy = noopBench.results();
+            WriteTable(file, "no-op (r4)", resultCopy);
         }
         BenchmarkWrapper("vec2 add", file, iterations, mathbench::vectors::addition2);
 //this is here for quick testing. just toggle 0 to 1 for quick enable/disable
