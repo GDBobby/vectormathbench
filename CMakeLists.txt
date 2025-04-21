@@ -52,7 +52,7 @@ CPMAddPackage(
 CPMAddPackage(
   NAME LinearAlgebra
   GITHUB_REPOSITORY GDBobby/LinearAlgebra
-  GIT_TAG 0dd9a309890da378af157eba5999bf33d99850c3
+  GIT_TAG df1a5445a216732b36cb969c047c948f57e4fd5a
 )
 #message(STATUS ${LinearAlgebra_SOURCE_DIR})
 

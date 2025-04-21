@@ -539,8 +539,8 @@ namespace mathbench
             bench.run("DXM",
                 [&]
                 {
-                    results.dxVecC = DirectX::XMVectorAdd(
-                        DirectX::XMVECTOR{}, DirectX::XMVECTOR{});
+                    results.dxVecC = DirectX::XMVectorAdd(DirectX::XMVECTOR{PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()}, 
+                    DirectX::XMVECTOR{PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()});
                     ankerl::nanobench::doNotOptimizeAway(results.dxVecC);
                 });
 
