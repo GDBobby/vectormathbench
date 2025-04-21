@@ -1849,8 +1849,8 @@ void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const
 
 
 int main() {
-    //constexpr int iterations = 1000000;
-    constexpr int iterations = 1000; //quick testing
+    constexpr int iterations = 1000000;
+    //constexpr int iterations = 1000; //quick testing
     // test_camera_matrix_funcs();
     std::ofstream file("benchmark_results.txt", std::ios::trunc);
     file << std::fixed << std::setprecision(2);
