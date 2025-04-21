@@ -1402,7 +1402,7 @@ namespace mathbench
             bench.run("LAB",
                 [&]
                 {
-                    results.labMat4a = LAB::CreateProjectionMatrix(0.5f, 0.1f, 100.f);
+                    results.labMat4a = LAB::CreateProjectionMatrix(0.5f, 1920.f / 1080.f, 0.1f, 100.f);
                     ankerl::nanobench::doNotOptimizeAway(results.labMat4a);
                 });
 
@@ -1853,8 +1853,8 @@ void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const
 
 
 int main() {
-    constexpr int iterations = 10000000;
-    //constexpr int iterations = 1000; //quick testing
+    //constexpr int iterations = 10000000;
+    constexpr int iterations = 1000; //quick testing
     // test_camera_matrix_funcs();
     std::ofstream file("benchmark_results.txt", std::ios::trunc);
     file << std::fixed << std::setprecision(2);
