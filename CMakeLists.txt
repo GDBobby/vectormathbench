@@ -44,26 +44,16 @@ CPMAddPackage("gh:move-engine/move-vectormath#33673bec3f7910cd6d23fb20f516f9cd6c
 # target_include_directories(rtm INTERFACE ${rtm_SOURCE_DIR}/includes)
 
 CPMAddPackage(
-  NAME sony_vectormath
-  GITHUB_REPOSITORY glampert/vectormath
-  GIT_TAG ee960fad0a4bbbf0ee2e7d03fc749c49ebeefaef
-  DOWNLOAD_ONLY YES
-)
-CPMAddPackage(
   NAME LinearAlgebra
   GITHUB_REPOSITORY GDBobby/LinearAlgebra
   GIT_TAG df1a5445a216732b36cb969c047c948f57e4fd5a
 )
 #message(STATUS ${LinearAlgebra_SOURCE_DIR})
 
-add_library(sony_vectormath INTERFACE)
-target_include_directories(sony_vectormath INTERFACE ${sony_vectormath_SOURCE_DIR})
-
 add_library(vmb_common INTERFACE)
 target_link_libraries(vmb_common INTERFACE 
   glm 
   DirectXMath 
-  sony_vectormath 
   move::vectormath 
   rtm rtm
 )

@@ -187,7 +187,7 @@ jobs:
 
   commit-push-benchmark:
     name: Benchmark Update
-    needs: [benchmark-windows]
+    needs: [benchmark-windows, benchmark-ubuntu-latest]
     runs-on: ubuntu-latest
   
     steps:
@@ -199,12 +199,18 @@ jobs:
         with:
           name: windows_benchmark.md
 
+      - name: Download Ubuntu Output
+        uses: actions/download-artifact@v4
+        with:
+          name: ubuntu_benchmark.md
+
       - name: push and commit
         shell: bash
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add windows_benchmark.md
+          git add ubuntu_benchmark.md
           git diff --staged --quiet || (git commit -m "Update benchmark results [auto]" && git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:master)
 
 # i think the issue lies with my cmake setup, i'll have to test it on my ubuntu machine later. until its fixed, only windows is benchmarked

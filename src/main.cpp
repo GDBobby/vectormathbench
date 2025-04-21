@@ -10,29 +10,6 @@
 #include <cstdlib>
 #include <type_traits>
 
-#if __unix
-namespace std
-{
-    inline float fabsf(float x)
-    {
-        return ::abs(x);
-    }
-
-    inline float sqrtf(float x)
-    {
-        return ::sqrtf(x);
-    }
-
-    inline float tanf(float x)
-    {
-        return ::tanf(x);
-    }
-}  // namespace std
-#endif
-
-// Sony vectormath
-#include <vectormath.hpp>
-
 #include <random>
 
 uint64_t random_float_iter = 0;
@@ -47,7 +24,6 @@ double PullRandomDoubleVal(){
     return static_cast<double>(PullRandomFloatVal());
 }
 
-#include "sse/internal.hpp"
 #define ANKERL_NANOBENCH_IMPLEMENT
 #include "nanobench.h"
 
@@ -80,16 +56,6 @@ double PullRandomDoubleVal(){
 #include <LAB/Vector.h>
 #include <LAB/Camera.h>
 #include <LAB/Transform.h>
-
-// Sony vectormath
-#include <vectormath.hpp>
-
-namespace Vectormath
-{
-    using Vector3 = Vectormath::SSE::Vector3;
-    using Vector4 = Vectormath::SSE::Vector4;
-    using Matrix4 = Vectormath::SSE::Matrix4;
-}  // namespace Vectormath
 
 namespace rtm
 {
@@ -317,14 +283,6 @@ namespace mathbench
         DirectX::XMFLOAT4X4 dxMat4b;
         DirectX::XMFLOAT4X4 dxMat4c;
 
-        // Sony vectormath
-        Vectormath::Vector2 sonyVec2;
-        Vectormath::Vector3 sonyVec3;
-        Vectormath::Vector4 sonyVec4;
-        Vectormath::Matrix4 sonyMat4a;
-        Vectormath::Matrix4 sonyMat4b;
-        Vectormath::Matrix4 sonyMat4c;
-
         // move::math (float)
         move::math::float2 mvVec2f;
         move::math::fast_float3 mvVec3f;
@@ -417,13 +375,6 @@ namespace mathbench
                     DirectX::XMStoreFloat2(&results.dxVec2, result);
                     ankerl::nanobench::doNotOptimizeAway(results.dxVec2);
                 });
-            bench.run("Vectormath",
-                [&]
-                {
-                    results.sonyVec2 = Vectormath::Vector2(PullRandomFloatVal(), PullRandomFloatVal()) +
-                                       Vectormath::Vector2(PullRandomFloatVal(), PullRandomFloatVal());
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyVec2);
-                });
             bench.run("move (float)",
                 [&]
                 {
@@ -477,14 +428,6 @@ namespace mathbench
 
                     DirectX::XMStoreFloat3(&results.dxVec3, result);
                     ankerl::nanobench::doNotOptimizeAway(results.dxVec3);
-                });
-
-            bench.run("Vectormath",
-                [&]
-                {
-                    results.sonyVec3 = Vectormath::Vector3(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
-                                       Vectormath::Vector3(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyVec3);
                 });
 
             bench.run("move (float)",
@@ -544,14 +487,6 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.dxVecC);
                 });
 
-            bench.run("Vectormath",
-                [&]
-                {
-                    results.sonyVec4 =
-                        Vectormath::Vector4(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
-                        Vectormath::Vector4(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyVec4);
-                });
             bench.run("move (float)",
                 [&]
                 {
@@ -708,26 +643,6 @@ namespace mathbench
                     });
             }
 
-            bench.run("Vectormath",
-                [&]
-                {
-                    using namespace Vectormath;
-                    Vector2 vec2a(PullRandomFloatVal(), PullRandomFloatVal());
-                    Vector2 vec2b(PullRandomFloatVal(), PullRandomFloatVal());
-                    Vector3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    Vector3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    Vector4 vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    Vector4 vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-
-                    auto x = dot(vec2a, vec2b);
-                    auto y = dot(cross(vec3a, vec3b), vec3b);
-                    auto z = dot(vec4a, vec4b);
-                    auto w = dot(vec4a + vec4b, vec4b);
-
-                    results.sonyVec4 = Vector4(x, y, z, w);
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyVec4);
-                });
-
             bench.run("move (float)",
                 [&]
                 {
@@ -860,28 +775,6 @@ namespace mathbench
                     });
             }
 
-            bench.run("Vectormath",
-                [&]
-                {
-                    using namespace Vectormath;
-                    Vector3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    Vector3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    Vector3 vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    Vector3 vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-
-                    auto stepOne = (vec3a + vec3b);
-                    auto stepTwo = vec3c - vec3d;
-
-                    // Vectormath does not have a memberwise multiplication
-                    results.sonyVec3 =
-                        cross(Vector3(stepOne.getX() * stepTwo.getX(),
-                                  stepOne.getY() * stepTwo.getY(),
-                                  stepOne.getZ() * stepTwo.getZ()),
-                            vec3a);
-
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyVec3);
-                });
-
             bench.run("move::math (float)",
                 [&]
                 {
@@ -998,25 +891,6 @@ namespace mathbench
                         ankerl::nanobench::doNotOptimizeAway(results.dxVec4);
                     });
             }
-
-            bench.run("Vectormath",
-                [&]
-                {
-                    using namespace Vectormath;
-                    Vector4 vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    Vector4 vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    Vector4 vec4c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    Vector4 vec4d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-
-                    Vector4 stepOne = (vec4a + vec4b);
-                    Vector4 stepTwo = Vector4(stepOne.getX() * vec4c.getX(),
-                        stepOne.getY() * vec4c.getY(),
-                        stepOne.getZ() * vec4c.getZ(),
-                        stepOne.getW() * vec4c.getW());
-
-                    results.sonyVec4 = stepTwo - vec4d;
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyVec4);
-                });
 
             bench.run("move::math(float)",
                 [&]
@@ -1160,18 +1034,6 @@ namespace mathbench
                         ScalingOrientationQuaternion, Scaling, RotationOrigin,
                         RotationQuaternion, Translation);
                     ankerl::nanobench::doNotOptimizeAway(results.dxMatA);
-                });
-
-            bench.run("Vectormath",
-                [&]
-                {
-                    using namespace Vectormath;
-                    results.sonyMat4a =
-                        Matrix4::translation(Vector3(1.0f, 2.0f, 3.0f)) *
-                        Matrix4::rotationX(0.5f) * Matrix4::rotationY(0.5f) *
-                        Matrix4::rotationZ(0.5f) *
-                        Matrix4::scale(Vector3(1.0f, 2.0f, 3.0f));
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyMat4a);
                 });
 
             bench.run("move::math (manual, float)",
@@ -1333,16 +1195,6 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.dxMatA);
                 });
 
-            bench.run("Vectormath",
-                [&]
-                {
-                    using namespace Vectormath;
-                    results.sonyMat4a = Matrix4::lookAt(
-                        Point3(1.0f, 2.0f, 3.0f), Point3(4.0f, 5.0f, 6.0f),
-                        Vector3(7.0f, 8.0f, 9.0f));
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyMat4a);
-                });
-
             bench.run("move::math (float)",
                 [&]
                 {
@@ -1421,15 +1273,6 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.dxMatA);
                 });
 
-            bench.run("Vectormath",
-                [&]
-                {
-                    using namespace Vectormath;
-                    results.sonyMat4a =
-                        Matrix4::perspective(0.5f, 1.0f, 0.1f, 100.0f);
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyMat4a);
-                });
-
             bench.run("move::math (float)",
                 [&]
                 {
@@ -1503,15 +1346,6 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.dxMatA);
                 });
 
-            bench.run("Vectormath",
-                [&]
-                {
-                    using namespace Vectormath;
-                    results.sonyMat4a =
-                        Matrix4::orthographic(0, 1280, 0, 720, 0.1f, 100.0f);
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyMat4a);
-                });
-
             bench.run("move::math (float)",
                 [&]
                 {
@@ -1579,14 +1413,6 @@ namespace mathbench
                     results.dxVecA = XMVector4Transform(results.dxVecA, results.dxMatA);
                     XMStoreFloat4(&results.dxVec4, results.dxVecA);
                     ankerl::nanobench::doNotOptimizeAway(results.dxVec4);
-                });
-
-            bench.run("Vectormath",
-                [&]
-                {
-                    using namespace Vectormath;
-                    results.sonyVec4 = results.sonyMat4a * results.sonyVec4;
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyVec4);
                 });
 
             bench.run("move::math (float)",
@@ -1672,14 +1498,6 @@ namespace mathbench
 
                     results.dxMatA = XMMatrixMultiply(results.dxMatB, results.dxMatC);
                     ankerl::nanobench::doNotOptimizeAway(results.dxMatA);
-                });
-
-            bench.run("Vectormath",
-                [&]
-                {
-                    using namespace Vectormath;
-                    results.sonyMat4a = results.sonyMat4b * results.sonyMat4c;
-                    ankerl::nanobench::doNotOptimizeAway(results.sonyMat4a);
                 });
 
             bench.run("move::math (float)",
