@@ -1804,14 +1804,14 @@ void CalculateViewAccuracy(std::ofstream& accuracyFile){
         sm = DirectX::SimpleMath::Matrix::CreateLookAt(
             DirectX::SimpleMath::Vector3(1.0f, 2.0f, 3.0f),
             DirectX::SimpleMath::Vector3(4.0f, 5.0f, 6.0f),
-            DirectX::SimpleMath::Vector3(7.0f, 8.0f, 9.0f));
+            DirectX::SimpleMath::Vector3(0.f, 1.f, 0.f));
     }
 
     glm::mat4 glmV;
     {
         glmV = glm::lookAt(glm::vec3(1.0f, 2.0f, 3.0f),
             glm::vec3(4.0f, 5.0f, 6.0f),
-            glm::vec3(7.0f, 8.0f, 9.0f));
+            glm::vec3(0.f, 1.f, 0.f));
     }
 
     LAB::Matrix<float, 4, 4> lab;
@@ -1820,7 +1820,7 @@ void CalculateViewAccuracy(std::ofstream& accuracyFile){
     LAB::Vector<float, 3> lookat = (center - eye).Normalized();
     {
         lab = LAB::CreateViewMatrix(
-            LAB::Vector<float, 3>(1.0f, 2.0f, 3.0f),
+            eye,
             lookat);
     }
 
@@ -1830,14 +1830,14 @@ void CalculateViewAccuracy(std::ofstream& accuracyFile){
         dx =
             XMMatrixLookAtLH(XMVectorSet(1.0f, 2.0f, 3.0f, 0.0f),
                 XMVectorSet(4.0f, 5.0f, 6.0f, 0.0f),
-                XMVectorSet(7.0f, 8.0f, 9.0f, 0.0f));
+                XMVectorSet(0.f, 1.f, 0.f, 0.f));
     }
 
     move::math::float4x4 mv;
     {
         using namespace move::math;
         mv = mat4x4f::look_at(
-            vec3f(1, 2, 3), vec3f(4, 5, 6), vec3f(7, 8, 9));
+            vec3f(1, 2, 3), vec3f(4, 5, 6), vec3f(0.f, 1.f, 0.f));
     }
 
     handle_accuracy_data<16>(accuracyFile, sm, glmV, lab, dx, mv);
@@ -2006,12 +2006,6 @@ int main() {
         CalculateComplex2Accuracy(accuracy_file);
         accuracy_file << "\n| complex 3\n";
         CalculateComplex3Accuracy(accuracy_file);
-        accuracy_file << "\n";
-        accuracy_file << "i think im just gonna let lab seem inaccurate on model until i know for sure it's actually inaccurate\n";
-        accuracy_file << "the functionality for every other func is terrible for runtime and i don't feel like optimizing them\n";
-        accuracy_file << "for exmaple, glm takes 86ns to calculate this according to last benchmark, lab was optimized away by the compiler\n";
-        accuracy_file << "but even if it wasn't optimized away, i'd guess lab would take 20ms or less.\n";
-        accuracy_file << "not due to the library itself, but the implementation in this vectormathbench program\n";
         accuracy_file << "\n| model\n";
         CalculateModelAccuracy(accuracy_file);
         accuracy_file << "\n| view\n";
