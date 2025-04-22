@@ -1411,7 +1411,7 @@ std::array<std::array<float, Count>, 5> CreateAverages(std::array<std::array<flo
     }
     return averages;
 }
-
+/*
 #define HANDLE_ACCURACY_DATA(x) constexpr std::size_t block_size = sizeof(float) * x; std::array<std::array<float, x>, 5> results;\
 memcpy(&results[0][0], &sm, block_size);                                                    \
 memcpy(&results[1][0], &glmV, block_size);                                                  \
@@ -1429,8 +1429,37 @@ name = "dx";                                                                    
 WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dx), averages[3]);          \
 name = "mv";                                                                                \
 WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mv), averages[4]);       
+*/
 
+template<std::size_t Count, typename T1, typename T2, typename T3, typename T4, typename T5>
+requires(
+    (sizeof(float) * Count) <= sizeof(T1),
+    (sizeof(float) * Count) <= sizeof(T2),
+    (sizeof(float) * Count) <= sizeof(T3),
+    (sizeof(float) * Count) <= sizeof(T4),
+    (sizeof(float) * Count) <= sizeof(T5)
+)
+void handle_accuracy_data(std::ofstream& accuracyFile, T1 sm, T2 glmV, T3 lab, T4 dx, T5 mv){
+    constexpr float block_size = sizeof(float) * Count;
 
+    std::array<std::array<float, Count>, 5> results;
+    memcpy(&results[0][0], &sm, block_size);
+    memcpy(&results[1][0], &glmV, block_size);
+    memcpy(&results[2][0], &lab, block_size);
+    memcpy(&results[3][0], &dx, block_size);
+    memcpy(&results[4][0], &mv, block_size);
+
+    auto averages = CreateAverages(results);std::string name = "sm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&sm), averages[0]);
+    name = "glm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmV), averages[1]);
+    name = "lab";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&lab), averages[2]);
+    name = "dx";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dx), averages[3]);
+    name = "mv";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mv), averages[4]);
+} 
 
 void CalculateAdd2Accuracy(std::ofstream& accuracyFile){
     float randomed[4] = {PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()};
@@ -1448,7 +1477,7 @@ void CalculateAdd2Accuracy(std::ofstream& accuracyFile){
 
     auto mv = move::math::vec2f(randomed[0], randomed[1]) + move::math::vec2f(randomed[2], randomed[3]);
 
-    HANDLE_ACCURACY_DATA(2);
+    handle_accuracy_data<2>(accuracyFile, sm, glmV, lab, dx, mv);
 }
 void CalculateAdd3Accuracy(std::ofstream& accuracyFile){
 
@@ -1471,7 +1500,8 @@ void CalculateAdd3Accuracy(std::ofstream& accuracyFile){
                     
     auto mv = move::math::vec3f(randomed[0], randomed[1], randomed[2]) + move::math::vec3f(randomed[3], randomed[4], randomed[5]);
 
-    HANDLE_ACCURACY_DATA(3);
+    handle_accuracy_data<3>(accuracyFile, sm, glmV, lab, dx, mv);
+    //HANDLE_ACCURACY_DATA(3);
 }
 void CalculateAdd4Accuracy(std::ofstream& accuracyFile){
 
@@ -1493,8 +1523,9 @@ void CalculateAdd4Accuracy(std::ofstream& accuracyFile){
     DirectX::XMStoreFloat4(&dx, result);
                     
     auto mv = move::math::vec4f(randomed[0], randomed[1], randomed[2], randomed[3]) + move::math::vec4f(randomed[4], randomed[5], randomed[6], randomed[7]);
-                    
-    HANDLE_ACCURACY_DATA(4);
+                 
+    handle_accuracy_data<4>(accuracyFile, sm, glmV, lab, dx, mv);   
+    //HANDLE_ACCURACY_DATA(4);
 }
 void CalculateComplex1Accuracy(std::ofstream& accuracyFile){
 
@@ -1593,7 +1624,8 @@ void CalculateComplex1Accuracy(std::ofstream& accuracyFile){
         mv = move::math::vec4f(x, y, z, w);
     }
 
-    HANDLE_ACCURACY_DATA(4);
+    handle_accuracy_data<4>(accuracyFile, sm, glmV, lab, dx, mv);
+    //HANDLE_ACCURACY_DATA(4);
 }
 void CalculateComplex2Accuracy(std::ofstream& accuracyFile){
     float randomVals[3] = {PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()};
@@ -1660,7 +1692,9 @@ void CalculateComplex2Accuracy(std::ofstream& accuracyFile){
 
         mv = vec3f::cross((stepOne * stepTwo), vec3a);
     }
-    HANDLE_ACCURACY_DATA(4);
+    
+    handle_accuracy_data<4>(accuracyFile, sm, glmV, lab, dx, mv);
+    //HANDLE_ACCURACY_DATA(4);
 }
 void CalculateComplex3Accuracy(std::ofstream& accuracyFile){
     mathbench::vectors::complex3vec4;
@@ -1744,7 +1778,8 @@ void CalculateComplex3Accuracy(std::ofstream& accuracyFile){
         });
     */
 
-    HANDLE_ACCURACY_DATA(4);
+    handle_accuracy_data<4>(accuracyFile, sm, glmV, lab, dx, mv);
+    //HANDLE_ACCURACY_DATA(4);
 }
 void CalculateModelAccuracy(std::ofstream& accuracyFile){
     mathbench::matrices::construct_model_matrix;
@@ -1808,7 +1843,8 @@ void CalculateModelAccuracy(std::ofstream& accuracyFile){
             mat4x4f::rotation_z(0.5f) * mat4x4f::scale(1, 2, 3);
     }
 
-    HANDLE_ACCURACY_DATA(16);
+    handle_accuracy_data<16>(accuracyFile, sm, glmV, lab, dx, mv);
+    //HANDLE_ACCURACY_DATA(16);
 }
 void CalculateViewAccuracy(std::ofstream& accuracyFile){
     mathbench::matrices::construct_view_matrix;
@@ -1851,7 +1887,8 @@ void CalculateViewAccuracy(std::ofstream& accuracyFile){
             vec3f(1, 2, 3), vec3f(4, 5, 6), vec3f(7, 8, 9));
     }
 
-    HANDLE_ACCURACY_DATA(16);
+    handle_accuracy_data<16>(accuracyFile, sm, glmV, lab, dx, mv);
+    //HANDLE_ACCURACY_DATA(16);
 }
 void CalculateProjectionAccuracy(std::ofstream& accuracyFile){
     mathbench::matrices::construct_perspective_projection_matrix;
@@ -1870,7 +1907,8 @@ void CalculateProjectionAccuracy(std::ofstream& accuracyFile){
     move::math::float4x4 mv = move::math::mat4x4f::perspective(0.5f, 1.0f, 0.1f, 100.0f);
 
 
-    HANDLE_ACCURACY_DATA(16);
+    handle_accuracy_data<16>(accuracyFile, sm, glmV, lab, dx, mv);
+    //HANDLE_ACCURACY_DATA(16);
 }
 void CalculateOrthoAccuracy(std::ofstream& accuracyFile){
     mathbench::matrices::ortho_projection_matrix;
@@ -1880,7 +1918,8 @@ void CalculateOrthoAccuracy(std::ofstream& accuracyFile){
     DirectX::XMMATRIX dx = DirectX::XMMatrixOrthographicLH(1280, 720, 0.1f, 100.0f);
     move::math::float4x4 mv = move::math::mat4x4f::orthographic(1280, 720, 0.1f, 100.0f);
 
-    HANDLE_ACCURACY_DATA(16);
+    handle_accuracy_data<16>(accuracyFile, sm, glmV, lab, dx, mv);
+    //HANDLE_ACCURACY_DATA(16);
 }
 void CalculateMatVecAccuracy(std::ofstream& accuracyFile){
     mathbench::matrices::vector_matrix_multiply;
@@ -1919,9 +1958,7 @@ void CalculateMatVecAccuracy(std::ofstream& accuracyFile){
 
     DirectX::SimpleMath::Vector4 sm = DirectX::SimpleMath::Vector4::Transform(sm2, smMat);
     glm::vec4 glmV = glmMat * glmV2;
-
     LAB::Vector<float, 4> lab = labMat * lab2;
-
     DirectX::XMFLOAT4 dx;
     DirectX::XMVECTOR dxA = DirectX::XMVector4Transform(dx2, dxMat);
     DirectX::XMStoreFloat4(&dx, dxA);
@@ -1929,7 +1966,8 @@ void CalculateMatVecAccuracy(std::ofstream& accuracyFile){
     move::math::fast_float4 mv;
     mv = mv2 * mvMat;
 
-    HANDLE_ACCURACY_DATA(16);
+    handle_accuracy_data<4>(accuracyFile, sm, glmV, lab, dx, mv);
+    //HANDLE_ACCURACY_DATA(16);
 }
 void CalculateMatMatAccuracy(std::ofstream& accuracyFile){
     mathbench::matrices::matrix_matrix_multiply;
@@ -1977,7 +2015,8 @@ void CalculateMatMatAccuracy(std::ofstream& accuracyFile){
     move::math::float4x4 mv = mvMat * mvMat2;
 
 
-    HANDLE_ACCURACY_DATA(16);
+    handle_accuracy_data<16>(accuracyFile, sm, glmV, lab, dx, mv);
+    //HANDLE_ACCURACY_DATA(16);
 }
 
 
