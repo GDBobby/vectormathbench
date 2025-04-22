@@ -1645,7 +1645,7 @@ void CalculateComplex2Accuracy(std::ofstream& accuracyFile){
         mv = vec3f::cross((stepOne * stepTwo), vec3a);
     }
     
-    handle_accuracy_data<4>(accuracyFile, sm, glmV, lab, dx, mv);
+    handle_accuracy_data<3>(accuracyFile, sm, glmV, lab, dx, mv);
     //HANDLE_ACCURACY_DATA(4);
 }
 void CalculateComplex3Accuracy(std::ofstream& accuracyFile){
@@ -1817,6 +1817,9 @@ void CalculateViewAccuracy(std::ofstream& accuracyFile){
     }
 
     LAB::Matrix<float, 4, 4> lab;
+    LAB::Vector<float, 3> center = LAB::Vector<float, 3>(4.0f, 5.0f, 6.0f);
+    LAB::Vector<float, 3> eye = LAB::Vector<float, 3>(1.0f, 2.0f, 3.0f);
+    LAB::Vector<float, 3> lookat = (center - eye).Normalized();
     {
         lab = LAB::CreateViewMatrix(
             LAB::Vector<float, 3>(1.0f, 2.0f, 3.0f),
@@ -1851,7 +1854,7 @@ void CalculateProjectionAccuracy(std::ofstream& accuracyFile){
     glm::mat4 glmV = glm::perspective(0.5f, 1.0f, 0.1f, 100.0f);
     
     
-    LAB::Matrix<float, 4, 4> lab = LAB::CreateProjectionMatrix(0.5f, 1920.f / 1080.f, 0.1f, 100.f);
+    LAB::Matrix<float, 4, 4> lab = LAB::CreateProjectionMatrix(0.5f, 1.f, 0.1f, 100.f);
     
         
     DirectX::XMMATRIX dx = DirectX::XMMatrixPerspectiveFovLH(0.5f, 1.0f, 0.1f, 100.0f);
@@ -2005,6 +2008,12 @@ int main() {
         CalculateComplex2Accuracy(accuracy_file);
         accuracy_file << "\n| complex 3\n";
         CalculateComplex3Accuracy(accuracy_file);
+        accuracy_file << "\n";
+        accuracy_file << "i think im just gonna let lab seem inaccurate on model until i know for sure it's actually inaccurate\n";
+        accuracy_file << "the functionality for every other func is terrible for runtime and i don't feel like optimizing them\n";
+        accuracy_file << "for exmaple, glm takes 86ns to calculate this according to last benchmark, lab was optimized away by the compiler\n";
+        accuracy_file << "but even if it wasn't optimized away, i'd guess lab would take 20ms or less.\n";
+        accuracy_file << "not due to the library itself, but the implementation in this vectormathbench program\n";
         accuracy_file << "\n| model\n";
         CalculateModelAccuracy(accuracy_file);
         accuracy_file << "\n| view\n";
