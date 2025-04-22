@@ -89,20 +89,38 @@ jobs:
         echo OS: $(lsb_release -d | sed -e 's/Description: *//') >> ubuntu_benchmark.md
         echo OS Version: $(lsb_release -r | sed -e 's/Release: *//') >> ubuntu_benchmark.md
         echo "" >> ubuntu_benchmark.md
+
+        echo "# Accuracy Results (ubuntu-latest)" > ubuntu_accuracy.md
+        echo "" >> ubuntu_accuracy.md
+        echo "Generated on: $(date '+%Y-%m-%d %H:%M:%S')" >> ubuntu_accuracy.md
+
+        echo ## System Info >> ubuntu_accuracy.md
+        echo CPU: $(lscpu | grep "Model name" | sed -e 's/Model name: *//') >> ubuntu_accuracy.md
+        echo OS: $(lsb_release -d | sed -e 's/Description: *//') >> ubuntu_accuracy.md
+        echo OS Version: $(lsb_release -r | sed -e 's/Release: *//') >> ubuntu_accuracy.md
+        echo "" >> ubuntu_accuracy.md
         
         echo "## SSE 4.2" >> ubuntu_benchmark.md
+        echo "## SSE 4.2" >> ubuntu_accuracy.md
         ./vectormathbench_sse42
         cat benchmark_results.txt >> ubuntu_benchmark.md
         echo "" >> ubuntu_benchmark.md
+        cat accuracy_results.txt >> ubuntu_accuracy.md
+        echo "" >> ubuntu_accuracy.md
         
         echo "## AVX" >> ubuntu_benchmark.md
+        echo "## AVX" >> ubuntu_accuracy.md
         ./vectormathbench_avx
         cat benchmark_results.txt >> ubuntu_benchmark.md
         echo "" >> ubuntu_benchmark.md
+        cat accuracy_results.txt >> ubuntu_accuracy.md
+        echo "" >> ubuntu_accuracy.md
         
         echo "## AVX2" >> ubuntu_benchmark.md
+        echo "## AVX2" >> ubuntu_accuracy.md
         ./vectormathbench_avx2
         cat benchmark_results.txt >> ubuntu_benchmark.md
+        cat accuracy_results.txt >> ubuntu_accuracy.md
 
 
     - name: Upload Ubuntu Benchmark
@@ -110,6 +128,12 @@ jobs:
       with:
         name: ubuntu_benchmark.md
         path: build/ubuntu_benchmark.md
+        
+    - name: Upload Ubuntu Accuracy
+      uses: actions/upload-artifact@v4
+      with:
+        name: ubuntu_accuracy.md
+        path: build/ubuntu_accuracy.md
 
   benchmark-windows:
     needs: [lint]
@@ -153,7 +177,7 @@ jobs:
           echo # Benchmark Results (windows-2022) > windows_benchmark.md
           echo Full Path: %cd%\windows_benchmark.md
           echo. >> windows_benchmark.md
-          echo # Benchmark Results (windows-2022) > windows_accuracy.md
+          echo # Accuracy Results (windows-2022) > windows_accuracy.md
           echo Full Path: %cd%\windows_accuracy.md
           echo. >> windows_accuracy.md
 
@@ -174,19 +198,27 @@ jobs:
           echo OS Version: !OS_VERSION! >> windows_accuracy.md
           echo. >> windows_accuracy.md
           
-          echo ## SSE 4.2 >> windows_benchmark.md
           vectormathbench_sse42.exe
+          echo ## SSE 4.2 >> windows_benchmark.md
           type benchmark_results.txt >> windows_benchmark.md
+
+          echo ## SSE 4.2 >> windows_accuracy.md
+          type accuracy_results.txt >> windows_accuracy.md
           
+
           echo. >> windows_benchmark.md
-          echo ## AVX >> windows_benchmark.md
           vectormathbench_avx.exe 
+          echo ## AVX >> windows_benchmark.md
           type benchmark_results.txt >> windows_benchmark.md
+          echo ## AVX >> windows_accuracy.md
+          type accuracy_results.txt >> windows_accuracy.md
           
           echo. >> windows_benchmark.md
           echo ## AVX2 >> windows_benchmark.md
           vectormathbench_avx2.exe
           type benchmark_results.txt >> windows_benchmark.md
+          echo ## AVX2 >> windows_accuracy.md
+          type accuracy_results.txt >> windows_accuracy.md
 
 
     - name: Upload Windows Benchmark
@@ -226,6 +258,11 @@ jobs:
         with:
           name: ubuntu_benchmark.md
 
+      - name: Download Ubuntu Output accuracy
+        uses: actions/download-artifact@v4
+        with:
+          name: ubuntu_accuracy.md
+
       - name: push and commit
         shell: bash
         run: |
@@ -234,6 +271,7 @@ jobs:
           git add windows_benchmark.md
           git add ubuntu_benchmark.md
           git add windows_accuracy.md
+          git add ubuntu_accuracy.md
           git diff --staged --quiet || (git commit -m "Update benchmark results [auto]" && git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:master)
 
 # i think the issue lies with my cmake setup, i'll have to test it on my ubuntu machine later. until its fixed, only windows is benchmarked
