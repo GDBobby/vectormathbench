@@ -153,18 +153,25 @@ jobs:
           echo # Benchmark Results (windows-2022) > windows_benchmark.md
           echo Full Path: %cd%\windows_benchmark.md
           echo. >> windows_benchmark.md
+          echo # Benchmark Results (windows-2022) > windows_accuracy.md
+          echo Full Path: %cd%\windows_accuracy.md
           echo. >> windows_accuracy.md
 
           echo Generated on: %date% at %time% >> windows_benchmark.md
           echo. >> windows_benchmark.md
+          echo Generated on: %date% at %time% >> windows_accuracy.md
           echo. >> windows_accuracy.md
           
           echo ## System Info >> windows_benchmark.md
           echo CPU: !CPU_NAME! >> windows_benchmark.md
           echo OS: !OS_NAME! >> windows_benchmark.md
           echo OS Version: !OS_VERSION! >> windows_benchmark.md
-          
           echo. >> windows_benchmark.md
+
+          echo ## System Info >> windows_accuracy.md
+          echo CPU: !CPU_NAME! >> windows_accuracy.md
+          echo OS: !OS_NAME! >> windows_accuracy.md
+          echo OS Version: !OS_VERSION! >> windows_accuracy.md
           echo. >> windows_accuracy.md
           
           echo ## SSE 4.2 >> windows_benchmark.md
