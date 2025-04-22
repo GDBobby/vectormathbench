@@ -1404,11 +1404,15 @@ void handle_accuracy_data(std::ofstream& accuracyFile, T1 sm, T2 glmV, T3 lab, T
     memcpy(&results[3][0], &dx, block_size);
     memcpy(&results[4][0], &mv, block_size);
 
-    accuracyFile << "|---------";
-    for(uint8_t i = 1; i < (Count - 1); i++){
-        accuracyFile << ":|----------";
+    accuracyFile << "|       lib |           ";
+    for(uint8_t i = 2; i < Count; i++){
+        accuracyFile << "|           ";
     }
-    accuracyFile << ":|:---------\n";
+    accuracyFile << "\n|----------:";
+    for(uint8_t i = 1; i < (Count - 1); i++){
+        accuracyFile << "|----------:";
+    }
+    accuracyFile << "|:----------\n";
     std::string name = "sm";
     WriteAccuracyFile<Count>(accuracyFile, name, reinterpret_cast<float*>(&sm));
     name = "glm";
@@ -1437,7 +1441,7 @@ void CalculateAdd2Accuracy(std::ofstream& accuracyFile){
 
     auto mv = move::math::vec2f(randomed[0], randomed[1]) + move::math::vec2f(randomed[2], randomed[3]);
 
-    accuracyFile << "\n" << "|     add2 |           |           |           |\n";
+    accuracyFile << "| add2\n";
     handle_accuracy_data<2>(accuracyFile, sm, glmV, lab, dx, mv);
 }
 void CalculateAdd3Accuracy(std::ofstream& accuracyFile){
