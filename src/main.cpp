@@ -1823,7 +1823,7 @@ void CalculateViewAccuracy(std::ofstream& accuracyFile){
     {
         lab = LAB::CreateViewMatrix(
             LAB::Vector<float, 3>(1.0f, 2.0f, 3.0f),
-            LAB::Vector<float, 3>(4.0f, 5.0f, 6.0f));
+            lookat);
     }
 
     DirectX::XMMATRIX dx;
