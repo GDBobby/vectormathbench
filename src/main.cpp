@@ -1750,24 +1750,22 @@ void CalculateModelAccuracy(std::ofstream& accuracyFile){
 
     glm::mat4 glmV;
     {
-        glmV = glm::translate(glm::mat4(1.0f),
-                                glm::vec3(1.0f, 2.0f, 3.0f)) *
-                            glm::rotate(glm::mat4(1.0f), 0.5f,
-                                glm::vec3(1.0f, 0.0f, 0.0f)) *
-                            glm::rotate(glm::mat4(1.0f), 0.5f,
-                                glm::vec3(0.0f, 1.0f, 0.0f)) *
-                            glm::rotate(glm::mat4(1.0f), 0.5f,
-                                glm::vec3(0.0f, 0.0f, 1.0f)) *
-                            glm::scale(glm::mat4(1.0f),
-                                glm::vec3(1.0f, 2.0f, 3.0f));
+        glmV = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 2.0f, 3.0f)) *
+            glm::rotate(glm::mat4(1.0f), 0.5f, glm::vec3(1.0f, 0.0f, 0.0f)) *
+            glm::rotate(glm::mat4(1.0f), 0.5f, glm::vec3(0.0f, 1.0f, 0.0f)) *
+            glm::rotate(glm::mat4(1.0f), 0.5f, glm::vec3(0.0f, 0.0f, 1.0f)) *
+            glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 2.0f, 3.0f)
+        );
     }
     LAB::Matrix<float, 4, 4> lab;
     {
-        lab = LAB::Transform<float, 3>{
-            LAB::Vector<float, 3>(1.0f, 2.0f, 3.0f), //translation
-            LAB::Vector<float, 3>(0.5f, 0.5f, 0.5f), //rotation,
-            LAB::Vector<float, 3>(1.f, 2.f, 3.f) //scale
-        }.GetMatrix();
+        const LAB::Matrix<float, 4, 4> identity = LAB::Identity<float, 4>(1.f);
+        lab = LAB::Translate(identity, LAB::Vector<float, 3>(1.f, 2.f, 3.f)) *
+            LAB::Rotate(identity, 0.5f, LAB::Vector<float, 3>(1.f, 0.f, 0.f)) *
+            LAB::Rotate(identity, 0.5f, LAB::Vector<float, 3>(0.f, 1.f, 0.f)) *
+            LAB::Rotate(identity, 0.5f, LAB::Vector<float, 3>(0.f, 0.f, 1.f)) *
+            LAB::Scale(identity, LAB::Vector<float, 3>(1.f, 2.f, 3.f)
+        );
     }
 
     DirectX::XMMATRIX dx;
