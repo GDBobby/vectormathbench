@@ -1365,20 +1365,6 @@ void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const
 
 template<std::size_t Count>
 void WriteAccuracyFile(std::ofstream& accuracyFile, std::string const& name, float* data){
-    /*
-        for (auto& ret : sortedResults) {
-            accuracyFile
-                << "| " << std::setw(19) << std::right << ret.median
-
-                << " | " << std::setw(19) << std::right << ret.average
-
-                << " | " << std::setw(6) << std::right << ret.errPerc << "%"
-
-                << " | " << std::setw(11) << std::right << ret.totalIter
-
-                << " | " << ret.libName << "\n";
-        }
-    */
     accuracyFile << "| " << std::setw(10) << std::right << name;
     for(uint8_t i = 0; i < Count; i++){
         accuracyFile << "| " << std::setw(10) << std::right << data[i];
@@ -1404,9 +1390,9 @@ void handle_accuracy_data(std::ofstream& accuracyFile, T1 sm, T2 glmV, T3 lab, T
     memcpy(&results[3][0], &dx, block_size);
     memcpy(&results[4][0], &mv, block_size);
 
-    accuracyFile << "|       lib |           ";
+    accuracyFile << "|       lib |      val0 ";
     for(uint8_t i = 2; i <= Count; i++){
-        accuracyFile << "|           ";
+        accuracyFile << "| " << std::setw(10) << std::right << std::string("val") + std::to_string(i);
     }
     accuracyFile << "\n";
     for(uint8_t i = 0; i <= (Count - 1); i++){
