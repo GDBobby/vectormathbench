@@ -1440,7 +1440,7 @@ requires(
     (sizeof(float) * Count) <= sizeof(T5)
 )
 void handle_accuracy_data(std::ofstream& accuracyFile, T1 sm, T2 glmV, T3 lab, T4 dx, T5 mv){
-    constexpr float block_size = sizeof(float) * Count;
+    constexpr std::size_t block_size = sizeof(float) * Count;
 
     std::array<std::array<float, Count>, 5> results;
     memcpy(&results[0][0], &sm, block_size);
@@ -2041,21 +2041,33 @@ int main() {
     accuracy_file << std::fixed << std::setprecision(2);
 
     {
+        accuracy_file << "add 2\n";
         CalculateAdd2Accuracy(accuracy_file);
+        accuracy_file << "add 3\n";
         CalculateAdd3Accuracy(accuracy_file);
+        accuracy_file << "add 4\n";
         CalculateAdd4Accuracy(accuracy_file);
+        accuracy_file << "compelx 1\n";
         CalculateComplex1Accuracy(accuracy_file);
+        accuracy_file << "complex 2\n";
         CalculateComplex2Accuracy(accuracy_file);
+        accuracy_file << "complex 3\n";
         CalculateComplex3Accuracy(accuracy_file);
+        accuracy_file << "model\n";
         CalculateModelAccuracy(accuracy_file);
+        accuracy_file << "view\n";
         CalculateViewAccuracy(accuracy_file);
+        accuracy_file << "projection\n";
         CalculateProjectionAccuracy(accuracy_file);
+        accuracy_file << "ortho\n";
         CalculateOrthoAccuracy(accuracy_file);
+        accuracy_file << "matvec\n";
         CalculateMatVecAccuracy(accuracy_file);
+        accuracy_file << "matmat\n";
         CalculateMatMatAccuracy(accuracy_file);
     }
 
-    /*
+    
     try
     {
         {
@@ -2124,6 +2136,6 @@ int main() {
     {
         std::cerr << e.what() << std::endl;
     }
-    */
+    
     return 0;
 }

@@ -153,9 +153,11 @@ jobs:
           echo # Benchmark Results (windows-2022) > windows_benchmark.md
           echo Full Path: %cd%\windows_benchmark.md
           echo. >> windows_benchmark.md
+          echo. >> windows_accuracy.md
 
           echo Generated on: %date% at %time% >> windows_benchmark.md
           echo. >> windows_benchmark.md
+          echo. >> windows_accuracy.md
           
           echo ## System Info >> windows_benchmark.md
           echo CPU: !CPU_NAME! >> windows_benchmark.md
@@ -163,6 +165,7 @@ jobs:
           echo OS Version: !OS_VERSION! >> windows_benchmark.md
           
           echo. >> windows_benchmark.md
+          echo. >> windows_accuracy.md
           
           echo ## SSE 4.2 >> windows_benchmark.md
           vectormathbench_sse42.exe
@@ -185,6 +188,13 @@ jobs:
         name: windows_benchmark.md
         path: build/Release/windows_benchmark.md
 
+    - name: Upload Windows Accuracy
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows_accuracy.md
+        path: build/Release/windows_accuracy.md
+
+
   commit-push-benchmark:
     name: Benchmark Update
     needs: [benchmark-windows, benchmark-ubuntu-latest]
@@ -198,6 +208,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: windows_benchmark.md
+          
+      - name: Download Windows msvc accuracy
+        uses: actions/download-artifact@v4
+        with:
+          name: windows_accuracy.md
 
       - name: Download Ubuntu Output
         uses: actions/download-artifact@v4
@@ -211,6 +226,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add windows_benchmark.md
           git add ubuntu_benchmark.md
+          git add windows_accuracy.md
           git diff --staged --quiet || (git commit -m "Update benchmark results [auto]" && git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:master)
 
 # i think the issue lies with my cmake setup, i'll have to test it on my ubuntu machine later. until its fixed, only windows is benchmarked
