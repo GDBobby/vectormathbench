@@ -1396,7 +1396,7 @@ std::array<std::array<float, Count>, 5> CreateAverages(std::array<std::array<flo
         }
     }
     for(uint8_t i = 0; i < 5; i++){
-        for(uint j = 0; j < 5; j++) {
+        for(uint8_t j = 0; j < 5; j++) {
             if(i != j) {
                 for(uint8_t k = 0; k < Count; k++){
                     averages[i][k] += results[j][k];
@@ -1412,14 +1412,12 @@ std::array<std::array<float, Count>, 5> CreateAverages(std::array<std::array<flo
     return averages;
 }
 
-#define HANDLE_ACCURACY_DATA(x) \
-constexpr std::size_t block_size = sizeof(float) * x;                                       \ 
-std::array<std::array<float, x>, 5> results;                                                \
-memcpy(&results[0][0], &sm, sizeof(sm));                                                    \
-memcpy(&results[1][0], &glmV, sizeof(glmV));                                                \
-memcpy(&results[2][0], &lab, sizeof(lab));                                                  \
-memcpy(&results[3][0], &dx, sizeof(dx));                                                    \
-memcpy(&results[4][0], &mv, sizeof(mv));                                                    \
+#define HANDLE_ACCURACY_DATA(x) constexpr std::size_t block_size = sizeof(float) * x; std::array<std::array<float, x>, 5> results;\
+memcpy(&results[0][0], &sm, block_size);                                                    \
+memcpy(&results[1][0], &glmV, block_size);                                                  \
+memcpy(&results[2][0], &lab, block_size);                                                   \
+memcpy(&results[3][0], &dx, block_size);                                                    \
+memcpy(&results[4][0], &mv, block_size);                                                    \
 auto averages = CreateAverages(results);                                                    \
 std::string name = "sm";                                                                    \
 WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&sm), averages[0]);          \
@@ -1430,7 +1428,9 @@ WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&lab), averages[2
 name = "dx";                                                                                \
 WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dx), averages[3]);          \
 name = "mv";                                                                                \
-WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mv), averages[4]);          
+WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mv), averages[4]);       
+
+
 
 void CalculateAdd2Accuracy(std::ofstream& accuracyFile){
     float randomed[4] = {PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()};
@@ -1450,7 +1450,6 @@ void CalculateAdd2Accuracy(std::ofstream& accuracyFile){
 
     HANDLE_ACCURACY_DATA(2);
 }
-
 void CalculateAdd3Accuracy(std::ofstream& accuracyFile){
 
     float randomed[6] = {PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()};
@@ -1474,7 +1473,6 @@ void CalculateAdd3Accuracy(std::ofstream& accuracyFile){
 
     HANDLE_ACCURACY_DATA(3);
 }
-
 void CalculateAdd4Accuracy(std::ofstream& accuracyFile){
 
     float randomed[8] = {PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()};
@@ -1498,8 +1496,7 @@ void CalculateAdd4Accuracy(std::ofstream& accuracyFile){
                     
     HANDLE_ACCURACY_DATA(4);
 }
-
-void CalculateComplex1Accuracy(){
+void CalculateComplex1Accuracy(std::ofstream& accuracyFile){
 
     float randomVals[4] = {
         PullRandomFloatVal(),
@@ -1598,120 +1595,391 @@ void CalculateComplex1Accuracy(){
 
     HANDLE_ACCURACY_DATA(4);
 }
-/*
-void CalculateComplex2Accuracy(){
+void CalculateComplex2Accuracy(std::ofstream& accuracyFile){
+    float randomVals[3] = {PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()};
+    DirectX::SimpleMath::Vector3 sm;
+    {
+        DirectX::SimpleMath::Vector3 vec3a(randomVals[0], randomVals[1], randomVals[2]);
+        DirectX::SimpleMath::Vector3 vec3b(randomVals[0], randomVals[1], randomVals[2]);
+        DirectX::SimpleMath::Vector3 vec3c(randomVals[0], randomVals[1], randomVals[2]);
+        DirectX::SimpleMath::Vector3 vec3d(randomVals[0], randomVals[1], randomVals[2]);
 
+        sm = ((vec3a + vec3b) * vec3c - vec3d).Cross(vec3a);
+    }
+    glm::vec3 glmV;
+    {
+        glm::vec3 vec3a(randomVals[0], randomVals[1], randomVals[2]);
+        glm::vec3 vec3b(randomVals[0], randomVals[1], randomVals[2]);
+        glm::vec3 vec3c(randomVals[0], randomVals[1], randomVals[2]);
+        glm::vec3 vec3d(randomVals[0], randomVals[1], randomVals[2]);
 
-    std::string name = "sm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
-    name = "glm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
-    name = "lab";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
-    name = "dx";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
-    name = "mv";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+        glmV = glm::cross((vec3a + vec3b) * vec3c - vec3d, vec3a);
+    }
+    LAB::Vector<float, 3> lab;
+    {
+        LAB::Vector<float, 3> vec3a(randomVals[0], randomVals[1], randomVals[2]);
+        LAB::Vector<float, 3> vec3b(randomVals[0], randomVals[1], randomVals[2]);
+        LAB::Vector<float, 3> vec3c(randomVals[0], randomVals[1], randomVals[2]);
+        LAB::Vector<float, 3> vec3d(randomVals[0], randomVals[1], randomVals[2]);
+
+        //LAB::CrossProduct();
+        lab = LAB::CrossProduct((vec3a + vec3b) * vec3c - vec3d, vec3a);
+    }
+    DirectX::XMFLOAT3 dx;
+    {
+        using namespace DirectX;
+        XMFLOAT3 vec3a(randomVals[0], randomVals[1], randomVals[2]);
+        XMFLOAT3 vec3b(randomVals[0], randomVals[1], randomVals[2]);
+        XMFLOAT3 vec3c(randomVals[0], randomVals[1], randomVals[2]);
+        XMFLOAT3 vec3d(randomVals[0], randomVals[1], randomVals[2]);
+
+        XMVECTOR vec3aVec = XMLoadFloat3(&vec3a);
+        XMVECTOR vec3bVec = XMLoadFloat3(&vec3b);
+        XMVECTOR vec3cVec = XMLoadFloat3(&vec3c);
+        XMVECTOR vec3dVec = XMLoadFloat3(&vec3d);
+
+        XMVECTOR vec3 = XMVector3Cross(
+            XMVectorSubtract(
+                XMVectorMultiply(
+                    XMVectorAdd(vec3aVec, vec3bVec), vec3cVec),
+                vec3dVec),
+            vec3aVec);
+
+        XMStoreFloat3(&dx, vec3);
+    }
+    move::math::vec3f mv;
+    {
+        using namespace move::math;
+        vec3f vec3a(randomVals[0], randomVals[1], randomVals[2]);
+        vec3f vec3b(randomVals[0], randomVals[1], randomVals[2]);
+        vec3f vec3c(randomVals[0], randomVals[1], randomVals[2]);
+        vec3f vec3d(randomVals[0], randomVals[1], randomVals[2]);
+
+        auto stepOne = (vec3a + vec3b);
+        auto stepTwo = vec3c - vec3d;
+
+        mv = vec3f::cross((stepOne * stepTwo), vec3a);
+    }
+    HANDLE_ACCURACY_DATA(4);
 }
-void CalculateComplex3Accuracy(){
+void CalculateComplex3Accuracy(std::ofstream& accuracyFile){
+    mathbench::vectors::complex3vec4;
 
+    float randomVals[4] = {PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()};
 
-    std::string name = "sm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
-    name = "glm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
-    name = "lab";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
-    name = "dx";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
-    name = "mv";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+    DirectX::SimpleMath::Vector4 sm;
+    {
+        DirectX::SimpleMath::Vector4 vec3a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        DirectX::SimpleMath::Vector4 vec3b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        DirectX::SimpleMath::Vector4 vec3c(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        DirectX::SimpleMath::Vector4 vec3d(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+
+        sm = ((vec3a + vec3b) * vec3c - vec3d);
+    }
+    glm::vec4 glmV;
+    {
+        glm::vec4 vec3a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        glm::vec4 vec3b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        glm::vec4 vec3c(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        glm::vec4 vec3d(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+
+        glmV = (vec3a + vec3b) * vec3c - vec3d;
+    }
+    LAB::Vector<float, 4> lab;
+    {
+        LAB::Vector<float, 4> vec3a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        LAB::Vector<float, 4> vec3b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        LAB::Vector<float, 4> vec3c(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        LAB::Vector<float, 4> vec3d(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+
+        lab = (vec3a + vec3b) * vec3c - vec3d;
+    }
+
+    DirectX::XMFLOAT4 dx;
+    {
+        using namespace DirectX;
+        XMFLOAT4 vec3a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        XMFLOAT4 vec3b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        XMFLOAT4 vec3c(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        XMFLOAT4 vec3d(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+
+        XMVECTOR vec3aVec = XMLoadFloat4(&vec3a);
+        XMVECTOR vec3bVec = XMLoadFloat4(&vec3b);
+        XMVECTOR vec3cVec = XMLoadFloat4(&vec3c);
+        XMVECTOR vec3dVec = XMLoadFloat4(&vec3d);
+
+        XMVECTOR vec3 = XMVectorSubtract(
+            XMVectorMultiply(
+                XMVectorAdd(vec3aVec, vec3bVec), vec3cVec),
+            vec3dVec);
+
+        XMStoreFloat4(&dx, vec3);
+    }
+    move::math::vec4f mv;
+    {
+        using namespace move::math;
+        vec4f vec4a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        vec4f vec4b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        vec4f vec4c(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        vec4f vec4dd(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+
+        mv = (vec4a + vec4b) * vec4c - vec4dd;
+    }
+
+    /*
+    bench.run("rtm",
+        [&]
+        {
+            using namespace rtm;
+            vector4f vec4a = vector_set(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+            vector4f vec4b = vector_set(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+            vector4f vec4c = vector_set(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+            vector4f vec4d = vector_set(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+
+            vector4f stepOne = vector_mul(vector_add(vec4a, vec4b), vec4c);
+            vector4f stepTwo = vector_sub(stepOne, vec4d);
+
+            results.rtmVec4f = stepTwo;
+            ankerl::nanobench::doNotOptimizeAway(results.rtmVec4f);
+        });
+    */
+
+    HANDLE_ACCURACY_DATA(4);
 }
-void CalculateModelAccuracy(){
+void CalculateModelAccuracy(std::ofstream& accuracyFile){
+    mathbench::matrices::construct_model_matrix;
 
+    DirectX::SimpleMath::Matrix sm;
+    {
+        sm =
+            DirectX::SimpleMath::Matrix::CreateTranslation(
+                1.0f, 2.0f, 3.0f) *
+            DirectX::SimpleMath::Matrix::CreateRotationX(0.5f) *
+            DirectX::SimpleMath::Matrix::CreateRotationY(0.5f) *
+            DirectX::SimpleMath::Matrix::CreateRotationZ(0.5f) *
+            DirectX::SimpleMath::Matrix::CreateScale(
+                1.0f, 2.0f, 3.0f);
+    }
 
-    std::string name = "sm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
-    name = "glm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
-    name = "lab";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
-    name = "dx";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
-    name = "mv";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+    glm::mat4 glmV;
+    {
+        glmV = glm::translate(glm::mat4(1.0f),
+                                glm::vec3(1.0f, 2.0f, 3.0f)) *
+                            glm::rotate(glm::mat4(1.0f), 0.5f,
+                                glm::vec3(1.0f, 0.0f, 0.0f)) *
+                            glm::rotate(glm::mat4(1.0f), 0.5f,
+                                glm::vec3(0.0f, 1.0f, 0.0f)) *
+                            glm::rotate(glm::mat4(1.0f), 0.5f,
+                                glm::vec3(0.0f, 0.0f, 1.0f)) *
+                            glm::scale(glm::mat4(1.0f),
+                                glm::vec3(1.0f, 2.0f, 3.0f));
+    }
+    LAB::Matrix<float, 4, 4> lab;
+    {
+        lab = LAB::Transform<float, 3>{
+            LAB::Vector<float, 3>(1.0f, 2.0f, 3.0f), //translation
+            LAB::Vector<float, 3>(0.5f, 0.5f, 0.5f), //rotation,
+            LAB::Vector<float, 3>(1.f, 2.f, 3.f) //scale
+        }.GetMatrix();
+    }
+
+    DirectX::XMMATRIX dx;
+    {
+        using namespace DirectX;
+        // Use XMMatrixMultiply
+
+        dx = XMMatrixMultiply(
+            XMMatrixMultiply(
+                XMMatrixMultiply(
+                    XMMatrixMultiply(
+                        XMMatrixTranslation(1.0f, 2.0f, 3.0f),
+                        XMMatrixRotationX(0.5f)),
+                    XMMatrixRotationY(0.5f)),
+                XMMatrixRotationZ(0.5f)),
+            XMMatrixScaling(1.0f, 2.0f, 3.0f));
+    }
+
+    move::math::float4x4 mv;
+    {
+        using namespace move::math;
+        mv =
+            mat4x4f::translation({1, 2, 3}) *
+            mat4x4f::rotation_x(0.5f) * mat4x4f::rotation_y(0.5f) *
+            mat4x4f::rotation_z(0.5f) * mat4x4f::scale(1, 2, 3);
+    }
+
+    HANDLE_ACCURACY_DATA(16);
 }
-void CalculateViewAccuracy(){
+void CalculateViewAccuracy(std::ofstream& accuracyFile){
+    mathbench::matrices::construct_view_matrix;
 
+    DirectX::SimpleMath::Matrix sm;
+    {
+        sm = DirectX::SimpleMath::Matrix::CreateLookAt(
+            DirectX::SimpleMath::Vector3(1.0f, 2.0f, 3.0f),
+            DirectX::SimpleMath::Vector3(4.0f, 5.0f, 6.0f),
+            DirectX::SimpleMath::Vector3(7.0f, 8.0f, 9.0f));
+    }
 
-    std::string name = "sm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
-    name = "glm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
-    name = "lab";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
-    name = "dx";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
-    name = "mv";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+    glm::mat4 glmV;
+    {
+        glmV = glm::lookAt(glm::vec3(1.0f, 2.0f, 3.0f),
+            glm::vec3(4.0f, 5.0f, 6.0f),
+            glm::vec3(7.0f, 8.0f, 9.0f));
+    }
+
+    LAB::Matrix<float, 4, 4> lab;
+    {
+        lab = LAB::CreateViewMatrix(
+            LAB::Vector<float, 3>(1.0f, 2.0f, 3.0f),
+            LAB::Vector<float, 3>(4.0f, 5.0f, 6.0f));
+    }
+
+    DirectX::XMMATRIX dx;
+    {
+        using namespace DirectX;
+        dx =
+            XMMatrixLookAtLH(XMVectorSet(1.0f, 2.0f, 3.0f, 0.0f),
+                XMVectorSet(4.0f, 5.0f, 6.0f, 0.0f),
+                XMVectorSet(7.0f, 8.0f, 9.0f, 0.0f));
+    }
+
+    move::math::float4x4 mv;
+    {
+        using namespace move::math;
+        mv = mat4x4f::look_at(
+            vec3f(1, 2, 3), vec3f(4, 5, 6), vec3f(7, 8, 9));
+    }
+
+    HANDLE_ACCURACY_DATA(16);
 }
-void CalculateProjectionAccuracy(){
+void CalculateProjectionAccuracy(std::ofstream& accuracyFile){
+    mathbench::matrices::construct_perspective_projection_matrix;
+
+    DirectX::SimpleMath::Matrix sm = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(0.5f, 1.0f, 0.1f, 100.0f);
+    
+
+    glm::mat4 glmV = glm::perspective(0.5f, 1.0f, 0.1f, 100.0f);
+    
+    
+    LAB::Matrix<float, 4, 4> lab = LAB::CreateProjectionMatrix(0.5f, 1920.f / 1080.f, 0.1f, 100.f);
+    
+        
+    DirectX::XMMATRIX dx = DirectX::XMMatrixPerspectiveFovLH(0.5f, 1.0f, 0.1f, 100.0f);
+
+    move::math::float4x4 mv = move::math::mat4x4f::perspective(0.5f, 1.0f, 0.1f, 100.0f);
 
 
-    std::string name = "sm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
-    name = "glm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
-    name = "lab";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
-    name = "dx";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
-    name = "mv";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+    HANDLE_ACCURACY_DATA(16);
 }
-void CalculateOrthoAccuracy(){
+void CalculateOrthoAccuracy(std::ofstream& accuracyFile){
+    mathbench::matrices::ortho_projection_matrix;
+    DirectX::SimpleMath::Matrix sm= DirectX::SimpleMath::Matrix::CreateOrthographic(1280, 720, 0.1f, 100.0f);
+    glm::mat4 glmV = glm::ortho<float>(0, 1280, 0, 720, 0.1f, 100.0f);
+    LAB::Matrix<float, 4, 4> lab = LAB::CreateOrthographicMatrix(0.f, 720.f, 0.f, 1280.f, 0.1f, 100.f);
+    DirectX::XMMATRIX dx = DirectX::XMMatrixOrthographicLH(1280, 720, 0.1f, 100.0f);
+    move::math::float4x4 mv = move::math::mat4x4f::orthographic(1280, 720, 0.1f, 100.0f);
 
-
-    std::string name = "sm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
-    name = "glm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
-    name = "lab";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
-    name = "dx";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
-    name = "mv";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+    HANDLE_ACCURACY_DATA(16);
 }
-void CalculateMatVecAccuracy(){
+void CalculateMatVecAccuracy(std::ofstream& accuracyFile){
+    mathbench::matrices::vector_matrix_multiply;
+
+    float randomVals[16];
+    for(uint8_t i = 0; i < 16; i++){
+        randomVals[i] = PullRandomFloatVal();
+    }
+    float randomVecVals[4];
+    for(uint8_t i = 0; i < 4; i++){
+        randomVecVals[i] = PullRandomFloatVal();
+    }
+
+    DirectX::SimpleMath::Matrix smMat;
+    memcpy(&smMat, randomVals, sizeof(float) * 16);
+    glm::mat4 glmMat;
+    memcpy(&glmMat, randomVals, sizeof(float) * 16);
+    LAB::Matrix<float, 4, 4> labMat;
+    memcpy(&labMat, randomVals, sizeof(float) * 16);
+    DirectX::XMMATRIX dxMat;
+    memcpy(&dxMat, randomVals, sizeof(float) * 16);
+    move::math::float4x4 mvMat;
+    memcpy(&mvMat, randomVals, sizeof(float) * 16);
 
 
-    std::string name = "sm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
-    name = "glm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
-    name = "lab";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
-    name = "dx";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
-    name = "mv";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+    DirectX::SimpleMath::Vector4 sm2;
+    glm::vec4 glmV2;
+    LAB::Vector<float, 4> lab2;
+    DirectX::XMVECTOR dx2;
+    move::math::fast_float4 mv2;
+    memcpy(&sm2, randomVecVals, sizeof(float) * 4);
+    memcpy(&glmV2, randomVecVals, sizeof(float) * 4);
+    memcpy(&lab2, randomVecVals, sizeof(float) * 4);
+    memcpy(&dx2, randomVecVals, sizeof(float) * 4);
+    memcpy(&mv2, randomVecVals, sizeof(float) * 4);
+
+    DirectX::SimpleMath::Vector4 sm = DirectX::SimpleMath::Vector4::Transform(sm2, smMat);
+    glm::vec4 glmV = glmMat * glmV2;
+
+    LAB::Vector<float, 4> lab = labMat * lab2;
+
+    DirectX::XMFLOAT4 dx;
+    DirectX::XMVECTOR dxA = DirectX::XMVector4Transform(dx2, dxMat);
+    DirectX::XMStoreFloat4(&dx, dxA);
+
+    move::math::fast_float4 mv;
+    mv = mv2 * mvMat;
+
+    HANDLE_ACCURACY_DATA(16);
 }
-void CalculateMatMatAccuracy(){
+void CalculateMatMatAccuracy(std::ofstream& accuracyFile){
+    mathbench::matrices::matrix_matrix_multiply;
+
+    float randomVals[16];
+    for(uint8_t i = 0; i < 16; i++){
+        randomVals[i] = PullRandomFloatVal();
+    }
+    float randomVals2[16];
+    for(uint8_t i = 0; i < 16; i++){
+        randomVals2[i] = PullRandomFloatVal();
+    }
+
+    DirectX::SimpleMath::Matrix smMat;
+    memcpy(&smMat, randomVals, sizeof(float) * 16);
+    glm::mat4 glmMat;
+    memcpy(&glmMat, randomVals, sizeof(float) * 16);
+    LAB::Matrix<float, 4, 4> labMat;
+    memcpy(&labMat, randomVals, sizeof(float) * 16);
+    DirectX::XMMATRIX dxMat;
+    memcpy(&dxMat, randomVals, sizeof(float) * 16);
+    move::math::float4x4 mvMat;
+    memcpy(&mvMat, randomVals, sizeof(float) * 16);
+    
+    DirectX::SimpleMath::Matrix smMat2;
+    memcpy(&smMat2, randomVals2, sizeof(float) * 16);
+    glm::mat4 glmMat2;
+    memcpy(&glmMat2, randomVals2, sizeof(float) * 16);
+    LAB::Matrix<float, 4, 4> labMat2;
+    memcpy(&labMat2, randomVals2, sizeof(float) * 16);
+    DirectX::XMMATRIX dxMat2;
+    memcpy(&dxMat2, randomVals2, sizeof(float) * 16);
+    move::math::float4x4 mvMat2;
+    memcpy(&mvMat2, randomVals2, sizeof(float) * 16);
 
 
-    std::string name = "sm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
-    name = "glm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
-    name = "lab";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
-    name = "dx";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
-    name = "mv";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+    DirectX::SimpleMath::Matrix sm = smMat * smMat2;
+
+    glm::mat4 glmV = glmMat * glmMat2;
+
+    LAB::Matrix<float, 4, 4> lab = labMat * labMat2;
+
+    DirectX::XMMATRIX dx = DirectX::XMMatrixMultiply(dxMat, dxMat2);
+
+    move::math::float4x4 mv = mvMat * mvMat2;
+
+
+    HANDLE_ACCURACY_DATA(16);
 }
-*/
+
 
 int main() {
     //constexpr int iterations = 1000000;
@@ -1732,9 +2000,22 @@ int main() {
 
     std::ofstream accuracy_file("accuracy_results.txt", std::ios::trunc);
     accuracy_file << std::fixed << std::setprecision(2);
-    CalculateAdd2Accuracy(accuracy_file);
-    CalculateAdd3Accuracy(accuracy_file);
-    CalculateAdd4Accuracy(accuracy_file);
+
+    {
+        CalculateAdd2Accuracy(accuracy_file);
+        CalculateAdd3Accuracy(accuracy_file);
+        CalculateAdd4Accuracy(accuracy_file);
+        CalculateComplex1Accuracy(accuracy_file);
+        CalculateComplex2Accuracy(accuracy_file);
+        CalculateComplex3Accuracy(accuracy_file);
+        CalculateModelAccuracy(accuracy_file);
+        CalculateViewAccuracy(accuracy_file);
+        CalculateProjectionAccuracy(accuracy_file);
+        CalculateOrthoAccuracy(accuracy_file);
+        CalculateMatVecAccuracy(accuracy_file);
+        CalculateMatMatAccuracy(accuracy_file);
+    }
+
     /*
     try
     {
