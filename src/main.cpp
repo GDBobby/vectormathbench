@@ -1309,16 +1309,6 @@ void WriteTable(std::ofstream& outFile, const std::string& section_name, std::ve
     outFile << "|      ns/op (median) |      ns/op(average) |    err% |  iterations | library\n";
     outFile << "|--------------------:|--------------------:|--------:|------------:|:----------\n";
 
-    /*
-    for (auto const& ret : results) {
-        outFile << "| " << std::setw(19) << std::right << ret.median(ankerl::nanobench::Result::Measure::elapsed) * static_cast<double>(1000000000)
-                << " | " << std::setw(19) << std::right << 1.0 / ret.median(ankerl::nanobench::Result::Measure::elapsed)
-                << " | " << std::setw(6) << std::right << ret.medianAbsolutePercentError(ankerl::nanobench::Result::Measure::elapsed) * 100.0 << "%"
-                << " | " << std::setw(9) << std::right << 0.0
-                << " | " << ret.config().mBenchmarkName << "\n";
-    }
-    */
-   //ret.mNameToMeasurements[(int)ankerl::nanobench::Result::Measure::elapsed]
     struct SortedResultsStruct {
         double median;
         double average;
@@ -1374,62 +1364,27 @@ void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const
 
 
 template<std::size_t Count>
-void WriteAccuracyFile(std::ofstream& accuracyFile, std::string const& name, float* data, std::array<float, Count> const& averages){
-    accuracyFile << name << " \t()";
-    for(uint8_t i = 0; i < (Count - 1); i++){
-        accuracyFile << data[i] << ":";
-    }
-    accuracyFile << data[Count - 1] << ") : other avg (";
-    for(uint8_t i = 0; i < Count; i++){
-        accuracyFile << averages[i] << ":";
-    }
-    accuracyFile << averages[Count - 1];
-    accuracyFile << ")\n";
-}
+void WriteAccuracyFile(std::ofstream& accuracyFile, std::string const& name, float* data){
+    /*
+        for (auto& ret : sortedResults) {
+            accuracyFile
+                << "| " << std::setw(19) << std::right << ret.median
 
-template<std::size_t Count>
-std::array<std::array<float, Count>, 5> CreateAverages(std::array<std::array<float, Count>, 5> const& results) {
-    std::array<std::array<float, Count>, 5> averages;
-    for(uint8_t i = 0; i < 5; i++){
-        for(uint8_t j = 0; j < Count; j++){
-            averages[i][j] = 0.f;
+                << " | " << std::setw(19) << std::right << ret.average
+
+                << " | " << std::setw(6) << std::right << ret.errPerc << "%"
+
+                << " | " << std::setw(11) << std::right << ret.totalIter
+
+                << " | " << ret.libName << "\n";
         }
+    */
+    accuracyFile << "| " << std::setw(9) << std::right << name;
+    for(uint8_t i = 0; i < Count; i++){
+        accuracyFile << "| " << std::setw(9) << std::right << data[i];
     }
-    for(uint8_t i = 0; i < 5; i++){
-        for(uint8_t j = 0; j < 5; j++) {
-            if(i != j) {
-                for(uint8_t k = 0; k < Count; k++){
-                    averages[i][k] += results[j][k];
-                }
-            }
-        }
-    }
-    for(uint8_t i = 0; i < 5; i++){
-        for(uint8_t j = 0; j < Count; j++){
-            averages[i][j] /= 4.f;
-        }
-    }
-    return averages;
+    accuracyFile << "\n";
 }
-/*
-#define HANDLE_ACCURACY_DATA(x) constexpr std::size_t block_size = sizeof(float) * x; std::array<std::array<float, x>, 5> results;\
-memcpy(&results[0][0], &sm, block_size);                                                    \
-memcpy(&results[1][0], &glmV, block_size);                                                  \
-memcpy(&results[2][0], &lab, block_size);                                                   \
-memcpy(&results[3][0], &dx, block_size);                                                    \
-memcpy(&results[4][0], &mv, block_size);                                                    \
-auto averages = CreateAverages(results);                                                    \
-std::string name = "sm";                                                                    \
-WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&sm), averages[0]);          \
-name = "glm";                                                                               \
-WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmV), averages[1]);        \
-name = "lab";                                                                               \
-WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&lab), averages[2]);         \
-name = "dx";                                                                                \
-WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dx), averages[3]);          \
-name = "mv";                                                                                \
-WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mv), averages[4]);       
-*/
 
 template<std::size_t Count, typename T1, typename T2, typename T3, typename T4, typename T5>
 requires(
@@ -1449,16 +1404,21 @@ void handle_accuracy_data(std::ofstream& accuracyFile, T1 sm, T2 glmV, T3 lab, T
     memcpy(&results[3][0], &dx, block_size);
     memcpy(&results[4][0], &mv, block_size);
 
-    auto averages = CreateAverages(results);std::string name = "sm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&sm), averages[0]);
+    accuracyFile << "|---------";
+    for(uint8_t i = 1; i < (Count - 1); i++){
+        accuracyFile << ":|----------";
+    }
+    accuracyFile << ":|:---------\n";
+    std::string name = "sm";
+    WriteAccuracyFile<Count>(accuracyFile, name, reinterpret_cast<float*>(&sm));
     name = "glm";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmV), averages[1]);
+    WriteAccuracyFile<Count>(accuracyFile, name, reinterpret_cast<float*>(&glmV));
     name = "lab";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&lab), averages[2]);
+    WriteAccuracyFile<Count>(accuracyFile, name, reinterpret_cast<float*>(&lab));
     name = "dx";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dx), averages[3]);
+    WriteAccuracyFile<Count>(accuracyFile, name, reinterpret_cast<float*>(&dx));
     name = "mv";
-    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mv), averages[4]);
+    WriteAccuracyFile<Count>(accuracyFile, name, reinterpret_cast<float*>(&mv));
 } 
 
 void CalculateAdd2Accuracy(std::ofstream& accuracyFile){
@@ -1477,6 +1437,7 @@ void CalculateAdd2Accuracy(std::ofstream& accuracyFile){
 
     auto mv = move::math::vec2f(randomed[0], randomed[1]) + move::math::vec2f(randomed[2], randomed[3]);
 
+    accuracyFile << "\n" << "|     add2 |           |           |           |\n";
     handle_accuracy_data<2>(accuracyFile, sm, glmV, lab, dx, mv);
 }
 void CalculateAdd3Accuracy(std::ofstream& accuracyFile){
@@ -1500,6 +1461,7 @@ void CalculateAdd3Accuracy(std::ofstream& accuracyFile){
                     
     auto mv = move::math::vec3f(randomed[0], randomed[1], randomed[2]) + move::math::vec3f(randomed[3], randomed[4], randomed[5]);
 
+    accuracyFile << "\n" << "|     add3 |\n";
     handle_accuracy_data<3>(accuracyFile, sm, glmV, lab, dx, mv);
     //HANDLE_ACCURACY_DATA(3);
 }
@@ -2027,7 +1989,7 @@ int main() {
 
     std::random_device ran_dev{};
     std::mt19937 ran_eng{ran_dev()};
-    std::uniform_real_distribution<float> distri(-1000.f, 1000.f);
+    std::uniform_real_distribution<float> distri(-10.f, 10.f);
     random_float_values.clear();
     random_float_values.reserve(1000);
     for(uint64_t i = 0; i < 1000; i++){
