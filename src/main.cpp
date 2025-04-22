@@ -1815,8 +1815,8 @@ void CalculateViewAccuracy(std::ofstream& accuracyFile){
     }
 
     LAB::Matrix<float, 4, 4> lab;
-    LAB::Vector<float, 3> center = LAB::Vector<float, 3>(1.f, 2.f, 3.f);
-    LAB::Vector<float, 3> eye = LAB::Vector<float, 3>(4.0f, 5.0f, 6.0f);
+    LAB::Vector<float, 3> center = LAB::Vector<float, 3>(4.0f, 5.0f, 6.0f);
+    LAB::Vector<float, 3> eye = LAB::Vector<float, 3>(1.f, 2.f, 3.f);
     LAB::Vector<float, 3> lookat = (center - eye).Normalized();
     {
         lab = LAB::CreateViewMatrix(
