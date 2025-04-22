@@ -1379,9 +1379,9 @@ void WriteAccuracyFile(std::ofstream& accuracyFile, std::string const& name, flo
                 << " | " << ret.libName << "\n";
         }
     */
-    accuracyFile << "| " << std::setw(9) << std::right << name;
+    accuracyFile << "| " << std::setw(10) << std::right << name;
     for(uint8_t i = 0; i < Count; i++){
-        accuracyFile << "| " << std::setw(9) << std::right << data[i];
+        accuracyFile << "| " << std::setw(10) << std::right << data[i];
     }
     accuracyFile << "\n";
 }
@@ -1405,11 +1405,11 @@ void handle_accuracy_data(std::ofstream& accuracyFile, T1 sm, T2 glmV, T3 lab, T
     memcpy(&results[4][0], &mv, block_size);
 
     accuracyFile << "|       lib |           ";
-    for(uint8_t i = 2; i < Count; i++){
+    for(uint8_t i = 2; i <= Count; i++){
         accuracyFile << "|           ";
     }
-    accuracyFile << "\n|----------:";
-    for(uint8_t i = 1; i < (Count - 1); i++){
+    accuracyFile << "\n";
+    for(uint8_t i = 0; i <= (Count - 1); i++){
         accuracyFile << "|----------:";
     }
     accuracyFile << "|:----------\n";
@@ -1441,7 +1441,6 @@ void CalculateAdd2Accuracy(std::ofstream& accuracyFile){
 
     auto mv = move::math::vec2f(randomed[0], randomed[1]) + move::math::vec2f(randomed[2], randomed[3]);
 
-    accuracyFile << "| add2\n";
     handle_accuracy_data<2>(accuracyFile, sm, glmV, lab, dx, mv);
 }
 void CalculateAdd3Accuracy(std::ofstream& accuracyFile){
@@ -1551,12 +1550,13 @@ void CalculateComplex1Accuracy(std::ofstream& accuracyFile){
     }
     DirectX::XMFLOAT4 dx;
     {
-        DirectX::XMFLOAT2 vec2a(PullRandomFloatVal(), PullRandomFloatVal());
-        DirectX::XMFLOAT2 vec2b(PullRandomFloatVal(), PullRandomFloatVal());
-        DirectX::XMFLOAT3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-        DirectX::XMFLOAT3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-        DirectX::XMFLOAT4 vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-        DirectX::XMFLOAT4 vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+
+        DirectX::XMFLOAT2 vec2a(randomVals[0], randomVals[1]);
+        DirectX::XMFLOAT2 vec2b(randomVals[0], randomVals[1]);
+        DirectX::XMFLOAT3 vec3a(randomVals[0], randomVals[1], randomVals[2]);
+        DirectX::XMFLOAT3 vec3b(randomVals[0], randomVals[1], randomVals[2]);
+        DirectX::XMFLOAT4 vec4a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        DirectX::XMFLOAT4 vec4b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
 
         DirectX::XMVECTOR vec2aVec = XMLoadFloat2(&vec2a);
         DirectX::XMVECTOR vec2bVec = XMLoadFloat2(&vec2b);
@@ -1575,12 +1575,13 @@ void CalculateComplex1Accuracy(std::ofstream& accuracyFile){
     move::math::vec4f mv;
     {
         using namespace move::math;
-        vec2f vec2a(PullRandomFloatVal(), PullRandomFloatVal());
-        vec2f vec2b(PullRandomFloatVal(), PullRandomFloatVal());
-        vec3f vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-        vec3f vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-        vec4f vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-        vec4f vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+
+        vec2f vec2a(randomVals[0], randomVals[1]);
+        vec2f vec2b(randomVals[0], randomVals[1]);
+        vec3f vec3a(randomVals[0], randomVals[1], randomVals[2]);
+        vec3f vec3b(randomVals[0], randomVals[1], randomVals[2]);
+        vec4f vec4a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        vec4f vec4b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
 
         auto x = vec2f::dot(vec2a, vec2b);
         auto y = vec3f::dot(vec3f::cross(vec3a, vec3b), vec3b);
@@ -2007,29 +2008,29 @@ int main() {
     accuracy_file << std::fixed << std::setprecision(2);
 
     {
-        accuracy_file << "add 2\n";
+        accuracy_file << "| add 2\n";
         CalculateAdd2Accuracy(accuracy_file);
-        accuracy_file << "add 3\n";
+        accuracy_file << "| add 3\n";
         CalculateAdd3Accuracy(accuracy_file);
-        accuracy_file << "add 4\n";
+        accuracy_file << "| add 4\n";
         CalculateAdd4Accuracy(accuracy_file);
-        accuracy_file << "compelx 1\n";
+        accuracy_file << "| compelx 1\n";
         CalculateComplex1Accuracy(accuracy_file);
-        accuracy_file << "complex 2\n";
+        accuracy_file << "| complex 2\n";
         CalculateComplex2Accuracy(accuracy_file);
-        accuracy_file << "complex 3\n";
+        accuracy_file << "| complex 3\n";
         CalculateComplex3Accuracy(accuracy_file);
-        accuracy_file << "model\n";
+        accuracy_file << "| model\n";
         CalculateModelAccuracy(accuracy_file);
-        accuracy_file << "view\n";
+        accuracy_file << "| view\n";
         CalculateViewAccuracy(accuracy_file);
-        accuracy_file << "projection\n";
+        accuracy_file << "| projection\n";
         CalculateProjectionAccuracy(accuracy_file);
-        accuracy_file << "ortho\n";
+        accuracy_file << "| ortho\n";
         CalculateOrthoAccuracy(accuracy_file);
-        accuracy_file << "matvec\n";
+        accuracy_file << "| matvec\n";
         CalculateMatVecAccuracy(accuracy_file);
-        accuracy_file << "matmat\n";
+        accuracy_file << "| matmat\n";
         CalculateMatMatAccuracy(accuracy_file);
     }
 
