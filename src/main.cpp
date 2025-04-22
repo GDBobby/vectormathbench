@@ -1450,7 +1450,6 @@ void CalculateAdd3Accuracy(std::ofstream& accuracyFile){
                     
     auto mv = move::math::vec3f(randomed[0], randomed[1], randomed[2]) + move::math::vec3f(randomed[3], randomed[4], randomed[5]);
 
-    accuracyFile << "\n" << "|     add3 |\n";
     handle_accuracy_data<3>(accuracyFile, sm, glmV, lab, dx, mv);
     //HANDLE_ACCURACY_DATA(3);
 }
@@ -1996,27 +1995,27 @@ int main() {
     {
         accuracy_file << "| add 2\n";
         CalculateAdd2Accuracy(accuracy_file);
-        accuracy_file << "| add 3\n";
+        accuracy_file << "\n| add 3\n";
         CalculateAdd3Accuracy(accuracy_file);
-        accuracy_file << "| add 4\n";
+        accuracy_file << "\n| add 4\n";
         CalculateAdd4Accuracy(accuracy_file);
-        accuracy_file << "| compelx 1\n";
+        accuracy_file << "\n| compelx 1\n";
         CalculateComplex1Accuracy(accuracy_file);
-        accuracy_file << "| complex 2\n";
+        accuracy_file << "\n| complex 2\n";
         CalculateComplex2Accuracy(accuracy_file);
-        accuracy_file << "| complex 3\n";
+        accuracy_file << "\n| complex 3\n";
         CalculateComplex3Accuracy(accuracy_file);
-        accuracy_file << "| model\n";
+        accuracy_file << "\n| model\n";
         CalculateModelAccuracy(accuracy_file);
-        accuracy_file << "| view\n";
+        accuracy_file << "\n| view\n";
         CalculateViewAccuracy(accuracy_file);
-        accuracy_file << "| projection\n";
+        accuracy_file << "\n| projection\n";
         CalculateProjectionAccuracy(accuracy_file);
-        accuracy_file << "| ortho\n";
+        accuracy_file << "\n| ortho\n";
         CalculateOrthoAccuracy(accuracy_file);
-        accuracy_file << "| matvec\n";
+        accuracy_file << "\n| matvec\n";
         CalculateMatVecAccuracy(accuracy_file);
-        accuracy_file << "| matmat\n";
+        accuracy_file << "\n| matmat\n";
         CalculateMatMatAccuracy(accuracy_file);
     }
 
