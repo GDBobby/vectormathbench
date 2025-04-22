@@ -20,9 +20,6 @@ float PullRandomFloatVal(){
     random_float_iter = (random_float_iter + 1) % random_float_values.size();
     return ret;
 }
-double PullRandomDoubleVal(){
-    return static_cast<double>(PullRandomFloatVal());
-}
 
 #define ANKERL_NANOBENCH_IMPLEMENT
 #include "nanobench.h"
@@ -56,6 +53,8 @@ double PullRandomDoubleVal(){
 #include <LAB/Vector.h>
 #include <LAB/Camera.h>
 #include <LAB/Transform.h>
+
+#include <array>
 
 namespace rtm
 {
@@ -291,43 +290,22 @@ namespace mathbench
         move::math::float4x4 mvMat4x4fb;
         move::math::float4x4 mvMat4x4fc;
 
-        // move::math (double)
-        move::math::double2 mvVec2d;
-        move::math::fast_double3 mvVec3d;
-        move::math::fast_double4 mvVec4d;
-        move::math::double4x4 mvMat4x4da;
-        move::math::double4x4 mvMat4x4db;
-        move::math::double4x4 mvMat4x4dc;
-
         // rtm
         rtm::vector4f rtmVec4f;
         rtm::vector4f rtmVec4fa;
         rtm::vector4f rtmVec4fb;
-        rtm::vector4d rtmVec4d;
-        rtm::vector4d rtmVec4da;
-        rtm::vector4d rtmVec4db;
 
         rtm::matrix3x4f rtmMat3x4f;
         rtm::matrix3x4f rtmMat3x4fa;
-        rtm::matrix3x4d rtmMat3x4d;
-        rtm::matrix3x4d rtmMat3x4da;
 
         rtm::matrix4x4f rtmMat4x4f;
         rtm::matrix4x4f rtmMat4x4fa;
         rtm::matrix4x4f rtmMat4x4fb;
         rtm::matrix4x4f rtmMat4x4fc;
-        rtm::matrix4x4d rtmMat4x4d;
-        rtm::matrix4x4d rtmMat4x4da;
-        rtm::matrix4x4d rtmMat4x4db;
-        rtm::matrix4x4d rtmMat4x4dc;
         rtm::qvvf rtmQvvf;
         rtm::qvvf rtmQvvfa;
         rtm::qvvf rtmQvvfb;
         rtm::qvvf rtmQvvfc;
-        rtm::qvvd rtmQvvd;
-        rtm::qvvd rtmQvvda;
-        rtm::qvvd rtmQvvdb;
-        rtm::qvvd rtmQvvdc;
 
         // DirectXMath
         DirectX::XMVECTOR dxVecA;
@@ -378,16 +356,8 @@ namespace mathbench
             bench.run("move (float)",
                 [&]
                 {
-                    using namespace move::math;
-                    results.mvVec2f = vec2f(PullRandomFloatVal(), PullRandomFloatVal()) + vec2f(PullRandomFloatVal(), PullRandomFloatVal());
+                    results.mvVec2f = move::math::vec2f(PullRandomFloatVal(), PullRandomFloatVal()) + move::math::vec2f(PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec2f);
-                });
-            bench.run("move (double)",
-                [&]
-                {
-                    using namespace move::math;
-                    results.mvVec2d = vec2d(PullRandomFloatVal(), PullRandomFloatVal()) + vec2d(PullRandomFloatVal(), PullRandomFloatVal());
-                    ankerl::nanobench::doNotOptimizeAway(results.mvVec2d);
                 });
         }
 
@@ -434,18 +404,8 @@ namespace mathbench
                 [&]
                 {
                     using namespace move::math;
-                    results.mvVec3f =
-                        vec3f(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) + vec3f(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    results.mvVec3f = vec3f(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) + vec3f(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec3f);
-                });
-
-            bench.run("move (double)",
-                [&]
-                {
-                    using namespace move::math;
-                    results.mvVec3d =
-                        vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) + vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    ankerl::nanobench::doNotOptimizeAway(results.mvVec3d);
                 });
         }
         void addition4(ankerl::nanobench::Bench& bench)
@@ -495,14 +455,6 @@ namespace mathbench
                                       vec4f(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec4f);
                 });
-            bench.run("move (double)",
-                [&]
-                {
-                    using namespace move::math;
-                    results.mvVec4d = vec4d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
-                                      vec4d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    ankerl::nanobench::doNotOptimizeAway(results.mvVec4d);
-                });
 
             bench.run("rtm",
                 [&]
@@ -513,16 +465,6 @@ namespace mathbench
                             vector_set(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()));
 
                     ankerl::nanobench::doNotOptimizeAway(results.rtmVec4f);
-                });
-
-            bench.run("rtm",
-                [&]
-                {
-                    using namespace rtm;
-                    results.rtmVec4d = rtm::vector_add(vector_set(PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal()),
-                            vector_set(PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal()));
-
-                    ankerl::nanobench::doNotOptimizeAway(results.rtmVec4d);
                 });
         }
 
@@ -662,26 +604,6 @@ namespace mathbench
                     results.mvVec4f = move::math::vec4f(x, y, z, w);
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec4f);
                 });
-
-            bench.run("move (double)",
-                [&]
-                {
-                    using namespace move::math;
-                    vec2d vec2a(PullRandomFloatVal(), PullRandomFloatVal());
-                    vec2d vec2b(PullRandomFloatVal(), PullRandomFloatVal());
-                    vec3d vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    vec3d vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    vec4d vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    vec4d vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-
-                    auto x = vec2d::dot(vec2a, vec2b);
-                    auto y = vec3d::dot(vec3d::cross(vec3a, vec3b), vec3b);
-                    auto z = vec4d::dot(vec4a, vec4b);
-                    auto w = vec4d::dot((vec4a + vec4b), vec4b);
-
-                    results.mvVec4d = move::math::vec4d(x, y, z, w);
-                    ankerl::nanobench::doNotOptimizeAway(results.mvVec4d);
-                });
         }
 
         void complex2vec3(ankerl::nanobench::Bench& bench)
@@ -790,22 +712,6 @@ namespace mathbench
                     results.mvVec3f = vec3f::cross((stepOne * stepTwo), vec3a);
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec3f);
                 });
-
-            bench.run("move::math (double)",
-                [&]
-                {
-                    using namespace move::math;
-                    vec3d vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    vec3d vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    vec3d vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    vec3d vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-
-                    auto stepOne = (vec3a + vec3b);
-                    auto stepTwo = vec3c - vec3d;
-
-                    results.mvVec3d = vec3d::cross((stepOne * stepTwo), vec3a);
-                    ankerl::nanobench::doNotOptimizeAway(results.mvVec3d);
-                });
         }
 
         void complex3vec4(ankerl::nanobench::Bench& bench)
@@ -905,19 +811,6 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec4f);
                 });
 
-            bench.run("move::math (double)",
-                [&]
-                {
-                    using namespace move::math;
-                    vec4d vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    vec4d vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    vec4d vec4c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    vec4d vec4dd(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-
-                    results.mvVec4d = (vec4a + vec4b) * vec4c - vec4dd;
-                    ankerl::nanobench::doNotOptimizeAway(results.mvVec4d);
-                });
-
             bench.run("rtm",
                 [&]
                 {
@@ -932,22 +825,6 @@ namespace mathbench
 
                     results.rtmVec4f = stepTwo;
                     ankerl::nanobench::doNotOptimizeAway(results.rtmVec4f);
-                });
-
-            bench.run("rtm",
-                [&]
-                {
-                    using namespace rtm;
-                    vector4d vec4a = vector_set(PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal());
-                    vector4d vec4b = vector_set(PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal());
-                    vector4d vec4c = vector_set(PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal());
-                    vector4d vec4d = vector_set(PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal(), PullRandomDoubleVal());
-
-                    vector4d stepOne = vector_mul(vector_add(vec4a, vec4b), vec4c);
-                    vector4d stepTwo = vector_sub(stepOne, vec4d);
-
-                    results.rtmVec4d = stepTwo;
-                    ankerl::nanobench::doNotOptimizeAway(results.rtmVec4d);
                 });
         }
     }  // namespace vectors
@@ -1058,30 +935,6 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.mvMat4x4fa);
                 });
 
-            bench.run("move::math (manual, double)",
-                [&]
-                {
-                    using namespace move::math;
-                    results.mvMat4x4da =
-                        mat4x4d::translation({1, 2, 3}) *
-                        mat4x4d::rotation(quatd::euler(0.5, 0.5, 0.5)) *
-                        mat4x4d::scale(1, 2, 3);
-
-                    ankerl::nanobench::doNotOptimizeAway(results.mvMat4x4da);
-                });
-
-            bench.run("move::math (builtin, double)",
-                [&]
-                {
-                    using namespace move::math;
-                    // results.mvMat4x4da =
-                    //     mat4x4d::trs(vec3d(1, 2, 3),
-                    //         quatd::euler(0.5f, 0.5f, 0.5f),
-                    //         vec3d(1, 2, 3));
-
-                    ankerl::nanobench::doNotOptimizeAway(results.mvMat4x4da);
-                });
-
             bench.run("rtm::qvvf (~transformation matrix)",
                 [&]
                 {
@@ -1089,17 +942,6 @@ namespace mathbench
                     results.rtmQvvf = qvv_set(quat_set(0.5f, 0.5f, 0.5f, 1.0f),
                         vector_set(1.0f, 2.0f, 3.0f, 0.0f),
                         vector_set(1.0f, 2.0f, 3.0f, 0.0f));
-
-                    ankerl::nanobench::doNotOptimizeAway(results.rtmQvvf);
-                });
-
-            bench.run("rtm::qvvd (~transformation matrix)",
-                [&]
-                {
-                    using namespace rtm;
-                    results.rtmQvvd = qvv_set(quat_set(0.5, 0.5, 0.5, 1.0),
-                        vector_set(1.0, 2.0, 3.0, 0.0),
-                        vector_set(1.0, 2.0, 3.0, 0.0));
 
                     ankerl::nanobench::doNotOptimizeAway(results.rtmQvvf);
                 });
@@ -1116,18 +958,6 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.rtmMat3x4fa);
                 });
 
-            bench.run("rtm::matrix3x4d",
-                [&]
-                {
-                    using namespace rtm;
-                    auto qvv = qvv_set(quat_set(0.5, 0.5, 0.5, 1.0),
-                        vector_set(1.0, 2.0, 3.0, 0.0),
-                        vector_set(1.0, 2.0, 3.0, 0.0));
-
-                    results.rtmMat3x4da = matrix_from_qvv(qvv);
-                    ankerl::nanobench::doNotOptimizeAway(results.rtmMat3x4da);
-                });
-
             bench.run("rtm::matrix4x4f",
                 [&]
                 {
@@ -1140,18 +970,6 @@ namespace mathbench
                     results.rtmMat4x4fa.z_axis =
                         vector_set_w(results.rtmMat4x4fa.z_axis, 1);
                     ankerl::nanobench::doNotOptimizeAway(results.rtmMat4x4fa);
-                });
-
-            bench.run("rtm::matrix4x4d",
-                [&]
-                {
-                    using namespace rtm;
-                    auto qvv = qvv_set(quat_set(0.5, 0.5, 0.5, 1.0),
-                        vector_set(1.0, 2.0, 3.0, 0.0),
-                        vector_set(1.0, 2.0, 3.0, 0.0));
-
-                    results.rtmMat4x4da = matrix_cast(matrix_from_qvv(qvv));
-                    ankerl::nanobench::doNotOptimizeAway(results.rtmMat4x4da);
                 });
         }
 
@@ -1205,16 +1023,6 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.mvMat4x4fa);
                 });
 
-            bench.run("move::math (double)",
-                [&]
-                {
-                    using namespace move::math;
-                    results.mvMat4x4da =
-                        mat4x4d::look_at({1, 2, 3}, {4, 5, 6}, {7, 8, 9});
-
-                    ankerl::nanobench::doNotOptimizeAway(results.mvMat4x4da);
-                });
-
             bench.run("rtm::matrix4x4f",
                 [&]
                 {
@@ -1225,18 +1033,6 @@ namespace mathbench
                             vector_set(4.0f, 5.0f, 6.0f, 0.0f),
                             vector_set(7.0f, 8.0f, 9.0f, 0.0f));
                     ankerl::nanobench::doNotOptimizeAway(results.rtmMat4x4fa);
-                });
-
-            bench.run("rtm::matrix4x4d",
-                [&]
-                {
-                    using namespace rtm;
-                    results.rtmMat4x4da =
-                        rtm::camera::look_at_rh<matrix4x4d, vector4d>(
-                            vector_set(1.0, 2.0, 3.0, 0.0),
-                            vector_set(4.0, 5.0, 6.0, 0.0),
-                            vector_set(7.0, 8.0, 9.0, 0.0));
-                    ankerl::nanobench::doNotOptimizeAway(results.rtmMat4x4da);
                 });
         }
 
@@ -1283,16 +1079,6 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.mvMat4x4fa);
                 });
 
-            bench.run("move::math (double)",
-                [&]
-                {
-                    using namespace move::math;
-                    results.mvMat4x4da =
-                        mat4x4d::perspective(0.5f, 1.0f, 0.1f, 100.0f);
-
-                    ankerl::nanobench::doNotOptimizeAway(results.mvMat4x4da);
-                });
-
             bench.run("rtm::matrix4x4f",
                 [&]
                 {
@@ -1300,15 +1086,6 @@ namespace mathbench
                     results.rtmMat4x4fa = rtm::camera::perspective_fov_rh(
                         0.5f, 1.0f, 0.1f, 100.0f);
                     ankerl::nanobench::doNotOptimizeAway(results.rtmMat4x4fa);
-                });
-
-            bench.run("rtm::matrix4x4d",
-                [&]
-                {
-                    using namespace rtm;
-                    results.rtmMat4x4da =
-                        rtm::camera::perspective_fov_rh(0.5, 1.0, 0.1, 100.0);
-                    ankerl::nanobench::doNotOptimizeAway(results.rtmMat4x4da);
                 });
         }
 
@@ -1356,16 +1133,6 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.mvMat4x4fa);
                 });
 
-            bench.run("move::math (double)",
-                [&]
-                {
-                    using namespace move::math;
-                    results.mvMat4x4da =
-                        mat4x4d::orthographic(1280, 720, 0.1f, 100.0f);
-
-                    ankerl::nanobench::doNotOptimizeAway(results.mvMat4x4da);
-                });
-
             bench.run("rtm::matrix4x4f",
                 [&]
                 {
@@ -1373,15 +1140,6 @@ namespace mathbench
                     results.rtmMat4x4fa =
                         rtm::camera::ortho_rh(1280.0f, 720.f, 0.1f, 100.0f);
                     ankerl::nanobench::doNotOptimizeAway(results.rtmMat4x4fa);
-                });
-
-            bench.run("rtm::matrix4x4d",
-                [&]
-                {
-                    using namespace rtm;
-                    results.rtmMat4x4da =
-                        rtm::camera::ortho_rh(1280., 720., 0.1, 100.0);
-                    ankerl::nanobench::doNotOptimizeAway(results.rtmMat4x4da);
                 });
         }
 
@@ -1423,29 +1181,12 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec4f);
                 });
 
-            bench.run("move::math (double)",
-                [&]
-                {
-                    using namespace move::math;
-                    results.mvVec4d = results.mvVec4d * results.mvMat4x4da;
-                    ankerl::nanobench::doNotOptimizeAway(results.mvVec4d);
-                });
-
             bench.run("rtm::matrix4x4f",
                 [&]
                 {
                     using namespace rtm;
                     results.rtmVec4f = matrix_mul_vector(results.rtmVec4fa, results.rtmMat4x4fa);
                     ankerl::nanobench::doNotOptimizeAway(results.rtmVec4f);
-                });
-                        
-
-            bench.run("rtm::matrix4x4d",
-                [&]
-                {
-                    using namespace rtm;
-                    results.rtmVec4d = matrix_mul_vector(results.rtmVec4da, results.rtmMat4x4da);
-                    ankerl::nanobench::doNotOptimizeAway(results.rtmVec4d);
                 });
 
             bench.run("rtm::qvvf",
@@ -1456,15 +1197,6 @@ namespace mathbench
                         qvv_mul_point3(results.rtmVec4fa, results.rtmQvvf);
 
                     ankerl::nanobench::doNotOptimizeAway(results.rtmVec4f);
-                });
-
-            bench.run("rtm::qvvd",
-                [&]
-                {
-                    using namespace rtm;
-                    results.rtmVec4d = qvv_mul_point3(results.rtmVec4da, results.rtmQvvd);
-
-                    ankerl::nanobench::doNotOptimizeAway(results.rtmVec4d);
                 });
         }
 
@@ -1508,14 +1240,6 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.mvMat4x4fa);
                 });
 
-            bench.run("move::math (double)",
-                [&]
-                {
-                    using namespace move::math;
-                    results.mvMat4x4da = results.mvMat4x4db * results.mvMat4x4dc;
-                    ankerl::nanobench::doNotOptimizeAway(results.mvMat4x4da);
-                });
-
             bench.run("rtm::qvvf",
                 [&]
                 {
@@ -1524,28 +1248,12 @@ namespace mathbench
                     ankerl::nanobench::doNotOptimizeAway(results.rtmQvvf);
                 });
 
-            bench.run("rtm::qvvd",
-                [&]
-                {
-                    using namespace rtm;
-                    results.rtmQvvda = qvv_mul(results.rtmQvvdb, results.rtmQvvdc);
-                    ankerl::nanobench::doNotOptimizeAway(results.rtmQvvda);
-                });
-
             bench.run("rtm::matrix4x4f",
                 [&]
                 {
                     using namespace rtm;
                     results.rtmMat4x4fa = matrix_mul(results.rtmMat4x4fb, results.rtmMat4x4fc);
                     ankerl::nanobench::doNotOptimizeAway(results.rtmMat4x4fa);
-                });
-
-            bench.run("rtm::matrix4x4d",
-                [&]
-                {
-                    using namespace rtm;
-                    results.rtmMat4x4da = matrix_mul(results.rtmMat4x4db, results.rtmMat4x4dc);
-                    ankerl::nanobench::doNotOptimizeAway(results.rtmMat4x4da);
                 });
         }
     }  // namespace matrices
@@ -1665,6 +1373,346 @@ void BenchmarkWrapper(std::string const& name, std::ofstream& outFile, int const
 }
 
 
+template<std::size_t Count>
+void WriteAccuracyFile(std::ofstream& accuracyFile, std::string const& name, float* data, std::array<float, Count> const& averages){
+    accuracyFile << name << " \t()";
+    for(uint8_t i = 0; i < (Count - 1); i++){
+        accuracyFile << data[i] << ":";
+    }
+    accuracyFile << data[Count - 1] << ") : other avg (";
+    for(uint8_t i = 0; i < Count; i++){
+        accuracyFile << averages[i] << ":";
+    }
+    accuracyFile << averages[Count - 1];
+    accuracyFile << ")\n";
+}
+
+template<std::size_t Count>
+std::array<std::array<float, Count>, 5> CreateAverages(std::array<std::array<float, Count>, 5> const& results) {
+    std::array<std::array<float, Count>, 5> averages;
+    for(uint8_t i = 0; i < 5; i++){
+        for(uint8_t j = 0; j < Count; j++){
+            averages[i][j] = 0.f;
+        }
+    }
+    for(uint8_t i = 0; i < 5; i++){
+        for(uint j = 0; j < 5; j++) {
+            if(i != j) {
+                for(uint8_t k = 0; k < Count; k++){
+                    averages[i][k] += results[j][k];
+                }
+            }
+        }
+    }
+    for(uint8_t i = 0; i < 5; i++){
+        for(uint8_t j = 0; j < Count; j++){
+            averages[i][j] /= 4.f;
+        }
+    }
+    return averages;
+}
+
+#define HANDLE_ACCURACY_DATA(x) \
+constexpr std::size_t block_size = sizeof(float) * x;                                       \ 
+std::array<std::array<float, x>, 5> results;                                                \
+memcpy(&results[0][0], &sm, sizeof(sm));                                                    \
+memcpy(&results[1][0], &glmV, sizeof(glmV));                                                \
+memcpy(&results[2][0], &lab, sizeof(lab));                                                  \
+memcpy(&results[3][0], &dx, sizeof(dx));                                                    \
+memcpy(&results[4][0], &mv, sizeof(mv));                                                    \
+auto averages = CreateAverages(results);                                                    \
+std::string name = "sm";                                                                    \
+WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&sm), averages[0]);          \
+name = "glm";                                                                               \
+WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmV), averages[1]);        \
+name = "lab";                                                                               \
+WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&lab), averages[2]);         \
+name = "dx";                                                                                \
+WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dx), averages[3]);          \
+name = "mv";                                                                                \
+WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mv), averages[4]);          
+
+void CalculateAdd2Accuracy(std::ofstream& accuracyFile){
+    float randomed[4] = {PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()};
+    auto sm = DirectX::SimpleMath::Vector2(randomed[0], randomed[1]) + DirectX::SimpleMath::Vector2(randomed[2], randomed[3]);
+    auto glmV = glm::vec2(randomed[0], randomed[1]) + glm::vec2(randomed[2], randomed[3]);
+    auto lab = LAB::Vector<float, 2>(randomed[0], randomed[1]) + LAB::Vector<float, 2>(randomed[2], randomed[3]);
+    
+    DirectX::XMFLOAT2 lhs(randomed[0], randomed[1]);
+    DirectX::XMFLOAT2 rhs(randomed[2], randomed[3]);
+    DirectX::XMVECTOR lhsVec = DirectX::XMLoadFloat2(&lhs);
+    DirectX::XMVECTOR rhsVec = DirectX::XMLoadFloat2(&rhs);
+    DirectX::XMVECTOR result = DirectX::XMVectorAdd(lhsVec, rhsVec);
+    DirectX::XMFLOAT2 dx;
+    DirectX::XMStoreFloat2(&dx, result);
+
+    auto mv = move::math::vec2f(randomed[0], randomed[1]) + move::math::vec2f(randomed[2], randomed[3]);
+
+    HANDLE_ACCURACY_DATA(2);
+}
+
+void CalculateAdd3Accuracy(std::ofstream& accuracyFile){
+
+    float randomed[6] = {PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()};
+    auto sm = DirectX::SimpleMath::Vector3(randomed[0], randomed[1], randomed[2]) +
+                   DirectX::SimpleMath::Vector3(randomed[3], randomed[4], randomed[5]);
+    auto glmV = glm::vec3(randomed[0], randomed[1], randomed[2]) +
+                   glm::vec3(randomed[3], randomed[4], randomed[5]);
+    auto lab = LAB::Vector<float, 3>(randomed[0], randomed[1], randomed[2]) +
+                   LAB::Vector<float, 3>(randomed[3], randomed[4], randomed[5]);
+                   
+    DirectX::XMFLOAT3 lhs(randomed[0], randomed[1], randomed[2]);
+    DirectX::XMFLOAT3 rhs(randomed[3], randomed[4], randomed[5]);
+    DirectX::XMVECTOR lhsVec = DirectX::XMLoadFloat3(&lhs);
+    DirectX::XMVECTOR rhsVec = DirectX::XMLoadFloat3(&rhs);
+    DirectX::XMVECTOR result = DirectX::XMVectorAdd(lhsVec, rhsVec);
+
+    DirectX::XMFLOAT3 dx;
+    DirectX::XMStoreFloat3(&dx, result);
+                    
+    auto mv = move::math::vec3f(randomed[0], randomed[1], randomed[2]) + move::math::vec3f(randomed[3], randomed[4], randomed[5]);
+
+    HANDLE_ACCURACY_DATA(3);
+}
+
+void CalculateAdd4Accuracy(std::ofstream& accuracyFile){
+
+    float randomed[8] = {PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()};
+    auto sm = DirectX::SimpleMath::Vector4(randomed[0], randomed[1], randomed[2], randomed[3]) +
+                   DirectX::SimpleMath::Vector4(randomed[4], randomed[5], randomed[6], randomed[7]);
+    auto glmV = glm::vec4(randomed[0], randomed[1], randomed[2], randomed[3]) +
+                   glm::vec4(randomed[4], randomed[5], randomed[6], randomed[7]);
+    auto lab = LAB::Vector<float, 4>(randomed[0], randomed[1], randomed[2], randomed[3]) +
+                   LAB::Vector<float, 4>(randomed[4], randomed[5], randomed[6], randomed[7]);
+                   
+    DirectX::XMFLOAT4 lhs(randomed[0], randomed[1], randomed[2], randomed[3]);
+    DirectX::XMFLOAT4 rhs(randomed[4], randomed[5], randomed[6], randomed[7]);
+    DirectX::XMVECTOR lhsVec = DirectX::XMLoadFloat4(&lhs);
+    DirectX::XMVECTOR rhsVec = DirectX::XMLoadFloat4(&rhs);
+    DirectX::XMVECTOR result = DirectX::XMVectorAdd(lhsVec, rhsVec);
+
+    DirectX::XMFLOAT4 dx;
+    DirectX::XMStoreFloat4(&dx, result);
+                    
+    auto mv = move::math::vec4f(randomed[0], randomed[1], randomed[2], randomed[3]) + move::math::vec4f(randomed[4], randomed[5], randomed[6], randomed[7]);
+                    
+    HANDLE_ACCURACY_DATA(4);
+}
+
+void CalculateComplex1Accuracy(){
+
+    float randomVals[4] = {
+        PullRandomFloatVal(),
+        PullRandomFloatVal(),
+        PullRandomFloatVal(),
+        PullRandomFloatVal()
+    };
+    DirectX::SimpleMath::Vector4 sm;
+    {
+        DirectX::SimpleMath::Vector2 vec2a(randomVals[0], randomVals[1]);
+        DirectX::SimpleMath::Vector2 vec2b(randomVals[0], randomVals[1]);
+        DirectX::SimpleMath::Vector3 vec3a(randomVals[0], randomVals[1], randomVals[2]);
+        DirectX::SimpleMath::Vector3 vec3b(randomVals[0], randomVals[1], randomVals[2]);
+        DirectX::SimpleMath::Vector4 vec4a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        DirectX::SimpleMath::Vector4 vec4b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+
+        auto x = vec2a.Dot(vec2b);
+        auto y = vec3a.Cross(vec3b).Dot(vec3b);
+        auto z = vec4a.Dot(vec4b);
+        auto w = (vec4a + vec4b).Dot(vec4b);
+        sm = DirectX::SimpleMath::Vector4(x, y, z, w);
+    }
+    glm::vec4 glmV;
+    {
+        glm::vec2 vec2a(randomVals[0], randomVals[1]);
+        glm::vec2 vec2b(randomVals[0], randomVals[1]);
+        glm::vec3 vec3a(randomVals[0], randomVals[1], randomVals[2]);
+        glm::vec3 vec3b(randomVals[0], randomVals[1], randomVals[2]);
+        glm::vec4 vec4a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        glm::vec4 vec4b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+
+        auto x = glm::dot(vec2a, vec2b);
+        auto y = glm::dot(glm::cross(vec3a, vec3b), vec3b);
+        auto z = glm::dot(vec4a, vec4b);
+        auto w = glm::dot(vec4a + vec4b, vec4b);
+
+        glmV = glm::vec4(x, y, z, w);
+    }
+
+    LAB::Vector<float, 4> lab;
+    {
+        LAB::Vector<float, 2> vec2a(randomVals[0], randomVals[1]);
+        LAB::Vector<float, 2> vec2b(randomVals[0], randomVals[1]);
+        LAB::Vector<float, 3> vec3a(randomVals[0], randomVals[1], randomVals[2]);
+        LAB::Vector<float, 3> vec3b(randomVals[0], randomVals[1], randomVals[2]);
+        LAB::Vector<float, 4> vec4a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        LAB::Vector<float, 4> vec4b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+
+        auto x = vec2a.DotProduct(vec2b);
+        auto y = LAB::DotProduct(LAB::CrossProduct(vec3a, vec3b), vec3b);
+        auto z = LAB::DotProduct(vec4a, vec4b);
+        auto w = LAB::DotProduct(vec4a + vec4b, vec4b);
+
+        lab = LAB::Vector<float, 4>(x, y, z, w);
+    }
+    DirectX::XMFLOAT4 dx;
+    {
+        DirectX::XMFLOAT2 vec2a(PullRandomFloatVal(), PullRandomFloatVal());
+        DirectX::XMFLOAT2 vec2b(PullRandomFloatVal(), PullRandomFloatVal());
+        DirectX::XMFLOAT3 vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+        DirectX::XMFLOAT3 vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+        DirectX::XMFLOAT4 vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+        DirectX::XMFLOAT4 vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+
+        DirectX::XMVECTOR vec2aVec = XMLoadFloat2(&vec2a);
+        DirectX::XMVECTOR vec2bVec = XMLoadFloat2(&vec2b);
+        DirectX::XMVECTOR vec3aVec = XMLoadFloat3(&vec3a);
+        DirectX::XMVECTOR vec3bVec = XMLoadFloat3(&vec3b);
+        DirectX::XMVECTOR vec4aVec = XMLoadFloat4(&vec4a);
+        DirectX::XMVECTOR vec4bVec = XMLoadFloat4(&vec4b);
+
+        auto x = DirectX::XMVectorGetX(DirectX::XMVector2Dot(vec2aVec, vec2bVec));
+        auto y = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMVector3Cross(vec3aVec, vec3bVec), vec3bVec));
+        auto z = DirectX::XMVectorGetX(DirectX::XMVector4Dot(vec4aVec, vec4bVec));
+        auto w = DirectX::XMVectorGetX(DirectX::XMVector4Dot(DirectX::XMVectorAdd(vec4aVec, vec4bVec), vec4bVec));
+
+        DirectX::XMStoreFloat4(&dx, DirectX::XMVectorSet(x, y, z, w));
+    }
+    move::math::vec4f mv;
+    {
+        using namespace move::math;
+        vec2f vec2a(PullRandomFloatVal(), PullRandomFloatVal());
+        vec2f vec2b(PullRandomFloatVal(), PullRandomFloatVal());
+        vec3f vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+        vec3f vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+        vec4f vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+        vec4f vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+
+        auto x = vec2f::dot(vec2a, vec2b);
+        auto y = vec3f::dot(vec3f::cross(vec3a, vec3b), vec3b);
+        auto z = vec4f::dot(vec4a, vec4b);
+        auto w = vec4f::dot((vec4a + vec4b), vec4b);
+
+        mv = move::math::vec4f(x, y, z, w);
+    }
+
+    HANDLE_ACCURACY_DATA(4);
+}
+/*
+void CalculateComplex2Accuracy(){
+
+
+    std::string name = "sm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
+    name = "glm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
+    name = "lab";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
+    name = "dx";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
+    name = "mv";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+}
+void CalculateComplex3Accuracy(){
+
+
+    std::string name = "sm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
+    name = "glm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
+    name = "lab";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
+    name = "dx";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
+    name = "mv";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+}
+void CalculateModelAccuracy(){
+
+
+    std::string name = "sm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
+    name = "glm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
+    name = "lab";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
+    name = "dx";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
+    name = "mv";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+}
+void CalculateViewAccuracy(){
+
+
+    std::string name = "sm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
+    name = "glm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
+    name = "lab";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
+    name = "dx";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
+    name = "mv";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+}
+void CalculateProjectionAccuracy(){
+
+
+    std::string name = "sm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
+    name = "glm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
+    name = "lab";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
+    name = "dx";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
+    name = "mv";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+}
+void CalculateOrthoAccuracy(){
+
+
+    std::string name = "sm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
+    name = "glm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
+    name = "lab";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
+    name = "dx";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
+    name = "mv";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+}
+void CalculateMatVecAccuracy(){
+
+
+    std::string name = "sm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
+    name = "glm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
+    name = "lab";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
+    name = "dx";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
+    name = "mv";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+}
+void CalculateMatMatAccuracy(){
+
+
+    std::string name = "sm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&smVec3), averages[0]);
+    name = "glm";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&glmVec3), averages[1]);
+    name = "lab";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&labVec3), averages[2]);
+    name = "dx";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&dxVec3), averages[3]);
+    name = "mv";
+    WriteAccuracyFile(accuracyFile, name, reinterpret_cast<float*>(&mvVec3f), averages[4]);
+}
+*/
+
 int main() {
     //constexpr int iterations = 1000000;
     constexpr int iterations = 1000; //quick testing
@@ -1682,27 +1730,26 @@ int main() {
     std::ofstream file("benchmark_results.txt", std::ios::trunc);
     file << std::fixed << std::setprecision(2);
 
+    std::ofstream accuracy_file("accuracy_results.txt", std::ios::trunc);
+    accuracy_file << std::fixed << std::setprecision(2);
+    CalculateAdd2Accuracy(accuracy_file);
+    CalculateAdd3Accuracy(accuracy_file);
+    CalculateAdd4Accuracy(accuracy_file);
+    /*
     try
     {
         {
             ankerl::nanobench::Bench noopBench;
             noopBench.name("noop");
             noopBench.minEpochIterations(iterations);
-            float floatnum;
+            float floatnum = 0.f;
             noopBench.run("Store float (reference 'no-op')",
                 [&]
                 {
                     floatnum = 0.f;
                     ankerl::nanobench::doNotOptimizeAway(floatnum);
                 });
-            auto resultCopy = noopBench.results();
-            WriteTable(file, "no-op", resultCopy);
-        }
-        {
-            ankerl::nanobench::Bench noopBench;
-            noopBench.name("noop");
-            noopBench.minEpochIterations(iterations);
-            float floatnum;
+
             noopBench.run("Pull (1) Random Float And Store (reference 'no-op')",
                 [&]
                 {
@@ -1710,42 +1757,21 @@ int main() {
                     random_float_iter = (random_float_iter + 1) % random_float_values.size();
                     ankerl::nanobench::doNotOptimizeAway(floatnum);
                 });
-            auto resultCopy = noopBench.results();
-            WriteTable(file, "no-op (r1)", resultCopy);
-        }
-        {
-            ankerl::nanobench::Bench noopBench;
-            noopBench.name("noop");
-            noopBench.minEpochIterations(iterations);
-            float floatnum;
+
             noopBench.run("Pull (2) Random Float And Store (reference 'no-op')",
                 [&]
                 {
                     floatnum = PullRandomFloatVal() + PullRandomFloatVal();
                     ankerl::nanobench::doNotOptimizeAway(floatnum);
                 });
-            auto resultCopy = noopBench.results();
-            WriteTable(file, "no-op (r2)", resultCopy);
-        }
-        {
-            ankerl::nanobench::Bench noopBench;
-            noopBench.name("noop");
-            noopBench.minEpochIterations(iterations);
-            float floatnum;
+
             noopBench.run("Pull (3) Random Float And Store (reference 'no-op')",
                 [&]
                 {
                     floatnum = PullRandomFloatVal() + PullRandomFloatVal() + PullRandomFloatVal();
                     ankerl::nanobench::doNotOptimizeAway(floatnum);
                 });
-            auto resultCopy = noopBench.results();
-            WriteTable(file, "no-op (r3)", resultCopy);
-        }
-        {
-            ankerl::nanobench::Bench noopBench;
-            noopBench.name("noop");
-            noopBench.minEpochIterations(iterations);
-            float floatnum;
+
             noopBench.run("Pull (4) Random Float And Store (reference 'no-op')",
                 [&]
                 {
@@ -1753,7 +1779,7 @@ int main() {
                     ankerl::nanobench::doNotOptimizeAway(floatnum);
                 });
             auto resultCopy = noopBench.results();
-            WriteTable(file, "no-op (r4)", resultCopy);
+            WriteTable(file, "no-op", resultCopy);
         }
         BenchmarkWrapper("vec2 add", file, iterations, mathbench::vectors::addition2);
 //this is here for quick testing. just toggle 0 to 1 for quick enable/disable
@@ -1778,5 +1804,6 @@ int main() {
     {
         std::cerr << e.what() << std::endl;
     }
+    */
     return 0;
 }
