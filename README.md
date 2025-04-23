@@ -1,6 +1,6 @@
 # Fork
 https://github.com/RasterDuck/vectormathbench
-This is a direct copy, I'm using it to compare performance with my library, [LinearAlgebra(LAB)](https://github.com/GDBobby/LinearAlgebra)
+This is a direct copy, I'm using it to compare performance with my library, [LinearAlgebra(LAB)](https://github.com/GDBobby/LAB)
 
 # Vector Math Benchmark
 
