@@ -472,6 +472,41 @@ namespace mathbench
                 result_TEST = veca.Sum();
                 ankerl::nanobench::doNotOptimizeAway(result_TEST);
             });
+
+            bench.run("eight float const",
+                [&]{
+                    BENCHMARK_TEST::Vector<8> veca{PullRandomFloatVal()};
+                    BENCHMARK_TEST::Vector<8> vecb{PullRandomFloatVal()};
+                    veca += vecb;
+                    result_TEST = veca.Sum();
+                    ankerl::nanobench::doNotOptimizeAway(result_TEST);
+                });
+                bench.run("eight float const ref",
+                [&]{
+                    BENCHMARK_TEST::VectorRef<8> veca{PullRandomFloatVal()};
+                    BENCHMARK_TEST::VectorRef<8> vecb{PullRandomFloatVal()};
+                    veca += vecb;
+                    result_TEST = veca.Sum();
+                    ankerl::nanobench::doNotOptimizeAway(result_TEST);
+                });
+                
+            bench.run("16 float const",
+                [&]{
+                    BENCHMARK_TEST::Vector<16> veca{PullRandomFloatVal()};
+                    BENCHMARK_TEST::Vector<16> vecb{PullRandomFloatVal()};
+                    veca += vecb;
+                    result_TEST = veca.Sum();
+                    ankerl::nanobench::doNotOptimizeAway(result_TEST);
+                });
+                bench.run("16 float const ref",
+                [&]{
+                    BENCHMARK_TEST::VectorRef<16> veca{PullRandomFloatVal()};
+                    BENCHMARK_TEST::VectorRef<16> vecb{PullRandomFloatVal()};
+                    veca += vecb;
+                    result_TEST = veca.Sum();
+                    ankerl::nanobench::doNotOptimizeAway(result_TEST);
+                });
+
         }
 
         void addition3(ankerl::nanobench::Bench& bench)
