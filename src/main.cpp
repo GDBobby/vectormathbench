@@ -56,6 +56,63 @@ float PullRandomFloatVal(){
 
 #include <array>
 
+#include <variant>
+#include <memory>
+#include <random>
+
+namespace BENCHMARK_TEST{
+template<uint8_t Count>
+struct Vector{
+  
+  float ele[Count];
+  Vector(float con){
+    for(uint8_t i = 0; i < Count; i++){
+      ele[i] = con;
+    }
+  }
+
+  Vector& operator+=(Vector const other){
+    for(uint8_t i =0 ; i < Count; i++){
+      ele[i] += other.ele[i];
+    }
+    return *this;
+  }
+
+  float Sum(){
+    float ret = 0.f;
+    for(uint8_t i =0 ; i < Count; i++){
+      ret += ele[i];
+    }
+    return ret;
+  }
+};
+
+template<uint8_t Count>
+struct VectorRef{
+
+  float ele[Count];
+  VectorRef(float con){
+    for(uint8_t i = 0; i < Count; i++){
+      ele[i] = con;
+    }
+  }
+
+  VectorRef& operator+=(VectorRef const& other){
+    for(uint8_t i =0 ; i < Count; i++){
+      ele[i] += other.ele[i];
+    }
+    return *this;
+  }
+  float Sum(){
+    float ret = 0.f;
+    for(uint8_t i =0 ; i < Count; i++){
+      ret += ele[i];
+    }
+    return ret;
+  }
+};
+}//namespace BENCHMARK_TEST
+
 namespace rtm
 {
     namespace camera
@@ -359,6 +416,62 @@ namespace mathbench
                     results.mvVec2f = move::math::vec2f(PullRandomFloatVal(), PullRandomFloatVal()) + move::math::vec2f(PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.mvVec2f);
                 });
+        }
+        void test_const_ref(ankerl::nanobench::Bench& bench){
+            float result_TEST;
+
+            bench.run("one float const",
+            [&]{
+                BENCHMARK_TEST::Vector<1> veca{PullRandomFloatVal()};
+                BENCHMARK_TEST::Vector<1> vecb{PullRandomFloatVal()};
+                veca += vecb;
+                result_TEST = veca.Sum();
+                ankerl::nanobench::doNotOptimizeAway(result_TEST);
+            });
+            bench.run("one float const ref",
+            [&]{
+                BENCHMARK_TEST::VectorRef<1> veca{PullRandomFloatVal()};
+                BENCHMARK_TEST::VectorRef<1> vecb{PullRandomFloatVal()};
+                veca += vecb;
+                result_TEST = veca.Sum();
+                ankerl::nanobench::doNotOptimizeAway(result_TEST);
+            });
+
+            
+            bench.run("two float const",
+            [&]{
+                BENCHMARK_TEST::Vector<2> veca{PullRandomFloatVal()};
+                BENCHMARK_TEST::Vector<2> vecb{PullRandomFloatVal()};
+                veca += vecb;
+                result_TEST = veca.Sum();
+                ankerl::nanobench::doNotOptimizeAway(result_TEST);
+            });
+            bench.run("two float const ref",
+            [&]{
+                BENCHMARK_TEST::VectorRef<2> veca{PullRandomFloatVal()};
+                BENCHMARK_TEST::VectorRef<2> vecb{PullRandomFloatVal()};
+                veca += vecb;
+                result_TEST = veca.Sum();
+                ankerl::nanobench::doNotOptimizeAway(result_TEST);
+            });
+
+            
+            bench.run("four float const",
+            [&]{
+                BENCHMARK_TEST::Vector<4> veca{PullRandomFloatVal()};
+                BENCHMARK_TEST::Vector<4> vecb{PullRandomFloatVal()};
+                veca += vecb;
+                result_TEST = veca.Sum();
+                ankerl::nanobench::doNotOptimizeAway(result_TEST);
+            });
+            bench.run("four float const ref",
+            [&]{
+                BENCHMARK_TEST::VectorRef<4> veca{PullRandomFloatVal()};
+                BENCHMARK_TEST::VectorRef<4> vecb{PullRandomFloatVal()};
+                veca += vecb;
+                result_TEST = veca.Sum();
+                ankerl::nanobench::doNotOptimizeAway(result_TEST);
+            });
         }
 
         void addition3(ankerl::nanobench::Bench& bench)
@@ -1815,13 +1928,14 @@ void CalculateViewAccuracy(std::ofstream& accuracyFile){
     }
 
     LAB::Matrix<float, 4, 4> lab;
-    LAB::Vector<float, 3> center = LAB::Vector<float, 3>(4.0f, 5.0f, 6.0f);
     LAB::Vector<float, 3> eye = LAB::Vector<float, 3>(1.f, 2.f, 3.f);
+    LAB::Vector<float, 3> center = LAB::Vector<float, 3>(4.0f, 5.0f, 6.0f);
     LAB::Vector<float, 3> lookat = (center - eye).Normalized();
     {
         lab = LAB::CreateViewMatrix(
             eye,
-            lookat);
+            lookat
+        );
     }
 
     DirectX::XMMATRIX dx;
@@ -2066,6 +2180,9 @@ int main() {
             auto resultCopy = noopBench.results();
             WriteTable(file, "no-op", resultCopy);
         }
+        
+        BenchmarkWrapper("testing const& param vs const param", file, iterations, mathbench::vectors::test_const_ref);
+        
         BenchmarkWrapper("vec2 add", file, iterations, mathbench::vectors::addition2);
 //this is here for quick testing. just toggle 0 to 1 for quick enable/disable
 #if 1
