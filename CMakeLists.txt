@@ -46,7 +46,7 @@ CPMAddPackage("gh:move-engine/move-vectormath#33673bec3f7910cd6d23fb20f516f9cd6c
 CPMAddPackage(
   NAME LinearAlgebra
   GITHUB_REPOSITORY GDBobby/LinearAlgebra
-  GIT_TAG a6bcbca363f932f02d4d4574e2c3b3043ee719e0
+  GIT_TAG f1fbf99b70787303f909bb05faa7bdbb11408da7
 )
 #message(STATUS ${LinearAlgebra_SOURCE_DIR})
 
