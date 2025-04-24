@@ -324,12 +324,12 @@ namespace mathbench
         glm::mat4 glmMat4c;
 
         // LAB
-        LAB::Vector<float, 2> labVec2;
-        LAB::Vector<float, 3> labVec3;
-        LAB::Vector<float, 4> labVec4;
-        LAB::Matrix<float, 4, 4> labMat4a;
-        LAB::Matrix<float, 4, 4> labMat4b;
-        LAB::Matrix<float, 4, 4> labMat4c;
+        lab::vec2 labVec2;
+        lab::vec3 labVec3;
+        lab::vec4 labVec4;
+        lab::mat4 labMat4a;
+        lab::mat4 labMat4b;
+        lab::mat4 labMat4c;
 
         // DirectXMath
         DirectX::XMFLOAT2 dxVec2;
@@ -394,7 +394,7 @@ namespace mathbench
             bench.run("LAB",
                 [&]
                 {
-                    results.labVec2 = LAB::Vector<float, 2>(PullRandomFloatVal(), PullRandomFloatVal()) + LAB::Vector<float, 2>(PullRandomFloatVal(), PullRandomFloatVal());
+                    results.labVec2 = lab::Vector<float, 2>(PullRandomFloatVal(), PullRandomFloatVal()) + lab::Vector<float, 2>(PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.labVec2);
                 });
             bench.run("DirectX",
@@ -529,8 +529,8 @@ namespace mathbench
             bench.run("LAB",
                 [&]
                 {
-                    results.labVec3 = LAB::Vector<float, 3>(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
-                                      LAB::Vector<float, 3>(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    results.labVec3 = lab::Vector<float, 3>(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
+                                      lab::Vector<float, 3>(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.labVec3);
                 });
 
@@ -581,8 +581,8 @@ namespace mathbench
             bench.run("LAB",
                 [&]
                 {
-                    results.labVec4 = LAB::Vector<float, 4>(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
-                                      LAB::Vector<float, 4>(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    results.labVec4 = lab::Vector<float, 4>(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()) +
+                                      lab::Vector<float, 4>(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
                     ankerl::nanobench::doNotOptimizeAway(results.labVec4);
                 });
 
@@ -658,19 +658,19 @@ namespace mathbench
             bench.run("LAB",
                 [&]
                 {
-                    LAB::Vector<float, 2> vec2a(PullRandomFloatVal(), PullRandomFloatVal());
-                    LAB::Vector<float, 2> vec2b(PullRandomFloatVal(), PullRandomFloatVal());
-                    LAB::Vector<float, 3> vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    LAB::Vector<float, 3> vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    LAB::Vector<float, 4> vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    LAB::Vector<float, 4> vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 2> vec2a(PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 2> vec2b(PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 3> vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 3> vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 4> vec4a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 4> vec4b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
-                    auto x = vec2a.DotProduct(vec2b);
-                    auto y = LAB::DotProduct(LAB::CrossProduct(vec3a, vec3b), vec3b);
-                    auto z = LAB::DotProduct(vec4a, vec4b);
-                    auto w = LAB::DotProduct(vec4a + vec4b, vec4b);
+                    auto x = vec2a.Dot(vec2b);
+                    auto y = lab::Dot(lab::Cross(vec3a, vec3b), vec3b);
+                    auto z = lab::Dot(vec4a, vec4b);
+                    auto w = lab::Dot(vec4a + vec4b, vec4b);
 
-                    results.labVec4 = LAB::Vector<float, 4>(x, y, z, w);
+                    results.labVec4 = lab::Vector<float, 4>(x, y, z, w);
                     ankerl::nanobench::doNotOptimizeAway(results.labVec4);
                 });
 
@@ -784,13 +784,13 @@ namespace mathbench
             bench.run("LAB",
                 [&]
                 {
-                    LAB::Vector<float, 3> vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    LAB::Vector<float, 3> vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    LAB::Vector<float, 3> vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    LAB::Vector<float, 3> vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 3> vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 3> vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 3> vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 3> vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
-                    //LAB::CrossProduct();
-                    results.labVec3 = LAB::CrossProduct((vec3a + vec3b) * vec3c - vec3d, vec3a);
+                    //lab::CrossProduct();
+                    results.labVec3 = lab::Cross((vec3a + vec3b) * vec3c - vec3d, vec3a);
                     ankerl::nanobench::doNotOptimizeAway(results.labVec3);
                 });
 
@@ -890,10 +890,10 @@ namespace mathbench
             bench.run("LAB",
                 [&]
                 {
-                    LAB::Vector<float, 4> vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    LAB::Vector<float, 4> vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    LAB::Vector<float, 4> vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
-                    LAB::Vector<float, 4> vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 4> vec3a(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 4> vec3b(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 4> vec3c(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
+                    lab::Vector<float, 4> vec3d(PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal());
 
                     results.labVec4 = (vec3a + vec3b) * vec3c - vec3d;
                     ankerl::nanobench::doNotOptimizeAway(results.labVec4);
@@ -1013,10 +1013,10 @@ namespace mathbench
             bench.run("LAB (~transformation matrix)",
                 [&]
                 {
-                    results.labMat4a = LAB::Transform<float, 3>{
-                        LAB::Vector<float, 3>(1.0f, 2.0f, 3.0f), //translation
-                        LAB::Vector<float, 3>(0.5f, 0.5f, 0.5f), //rotation,
-                        LAB::Vector<float, 3>(1.f, 2.f, 3.f) //scale
+                    results.labMat4a = lab::Transform<float, 3>{
+                        lab::Vector<float, 3>(1.0f, 2.0f, 3.0f), //translation
+                        lab::Vector<float, 3>(0.5f, 0.5f, 0.5f), //rotation,
+                        lab::Vector<float, 3>(1.f, 2.f, 3.f) //scale
                     }.GetMatrix();
                     ankerl::nanobench::doNotOptimizeAway(results.labMat4a);
                 });
@@ -1144,9 +1144,9 @@ namespace mathbench
             bench.run("LAB",
                 [&]
                 {
-                    results.labMat4a = LAB::CreateViewMatrix(
-                        LAB::Vector<float, 3>(1.0f, 2.0f, 3.0f),
-                        LAB::Vector<float, 3>(4.0f, 5.0f, 6.0f));
+                    results.labMat4a = lab::CreateViewMatrix(
+                        lab::Vector<float, 3>(1.0f, 2.0f, 3.0f),
+                        lab::Vector<float, 3>(4.0f, 5.0f, 6.0f));
                     ankerl::nanobench::doNotOptimizeAway(results.labMat4a);
                 });
 
@@ -1204,7 +1204,7 @@ namespace mathbench
             bench.run("LAB",
                 [&]
                 {
-                    results.labMat4a = LAB::CreateProjectionMatrix(0.5f, 1920.f / 1080.f, 0.1f, 100.f);
+                    results.labMat4a = lab::CreateProjectionMatrix(0.5f, 1920.f / 1080.f, 0.1f, 100.f);
                     ankerl::nanobench::doNotOptimizeAway(results.labMat4a);
                 });
 
@@ -1258,7 +1258,7 @@ namespace mathbench
             bench.run("LAB",
                 [&]
                 {
-                    results.labMat4a = LAB::CreateOrthographicMatrix(0.f, 720.f, 0.f, 1280.f, 0.1f, 100.f);
+                    results.labMat4a = lab::CreateOrthographicMatrix(0.f, 720.f, 0.f, 1280.f, 0.1f, 100.f);
                     ankerl::nanobench::doNotOptimizeAway(results.labMat4a);
                 });
 
@@ -1563,7 +1563,7 @@ void CalculateAdd2Accuracy(std::ofstream& accuracyFile){
     float randomed[4] = {PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()};
     auto sm = DirectX::SimpleMath::Vector2(randomed[0], randomed[1]) + DirectX::SimpleMath::Vector2(randomed[2], randomed[3]);
     auto glmV = glm::vec2(randomed[0], randomed[1]) + glm::vec2(randomed[2], randomed[3]);
-    auto lab = LAB::Vector<float, 2>(randomed[0], randomed[1]) + LAB::Vector<float, 2>(randomed[2], randomed[3]);
+    auto lab = lab::Vector<float, 2>(randomed[0], randomed[1]) + lab::Vector<float, 2>(randomed[2], randomed[3]);
     
     DirectX::XMFLOAT2 lhs(randomed[0], randomed[1]);
     DirectX::XMFLOAT2 rhs(randomed[2], randomed[3]);
@@ -1584,8 +1584,8 @@ void CalculateAdd3Accuracy(std::ofstream& accuracyFile){
                    DirectX::SimpleMath::Vector3(randomed[3], randomed[4], randomed[5]);
     auto glmV = glm::vec3(randomed[0], randomed[1], randomed[2]) +
                    glm::vec3(randomed[3], randomed[4], randomed[5]);
-    auto lab = LAB::Vector<float, 3>(randomed[0], randomed[1], randomed[2]) +
-                   LAB::Vector<float, 3>(randomed[3], randomed[4], randomed[5]);
+    auto lab = lab::Vector<float, 3>(randomed[0], randomed[1], randomed[2]) +
+                   lab::Vector<float, 3>(randomed[3], randomed[4], randomed[5]);
                    
     DirectX::XMFLOAT3 lhs(randomed[0], randomed[1], randomed[2]);
     DirectX::XMFLOAT3 rhs(randomed[3], randomed[4], randomed[5]);
@@ -1608,8 +1608,8 @@ void CalculateAdd4Accuracy(std::ofstream& accuracyFile){
                    DirectX::SimpleMath::Vector4(randomed[4], randomed[5], randomed[6], randomed[7]);
     auto glmV = glm::vec4(randomed[0], randomed[1], randomed[2], randomed[3]) +
                    glm::vec4(randomed[4], randomed[5], randomed[6], randomed[7]);
-    auto lab = LAB::Vector<float, 4>(randomed[0], randomed[1], randomed[2], randomed[3]) +
-                   LAB::Vector<float, 4>(randomed[4], randomed[5], randomed[6], randomed[7]);
+    auto lab = lab::Vector<float, 4>(randomed[0], randomed[1], randomed[2], randomed[3]) +
+                   lab::Vector<float, 4>(randomed[4], randomed[5], randomed[6], randomed[7]);
                    
     DirectX::XMFLOAT4 lhs(randomed[0], randomed[1], randomed[2], randomed[3]);
     DirectX::XMFLOAT4 rhs(randomed[4], randomed[5], randomed[6], randomed[7]);
@@ -1665,21 +1665,21 @@ void CalculateComplex1Accuracy(std::ofstream& accuracyFile){
         glmV = glm::vec4(x, y, z, w);
     }
 
-    LAB::Vector<float, 4> lab;
+    lab::Vector<float, 4> lab;
     {
-        LAB::Vector<float, 2> vec2a(randomVals[0], randomVals[1]);
-        LAB::Vector<float, 2> vec2b(randomVals[0], randomVals[1]);
-        LAB::Vector<float, 3> vec3a(randomVals[0], randomVals[1], randomVals[2]);
-        LAB::Vector<float, 3> vec3b(randomVals[0], randomVals[1], randomVals[2]);
-        LAB::Vector<float, 4> vec4a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
-        LAB::Vector<float, 4> vec4b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        lab::Vector<float, 2> vec2a(randomVals[0], randomVals[1]);
+        lab::Vector<float, 2> vec2b(randomVals[0], randomVals[1]);
+        lab::Vector<float, 3> vec3a(randomVals[0], randomVals[1], randomVals[2]);
+        lab::Vector<float, 3> vec3b(randomVals[0], randomVals[1], randomVals[2]);
+        lab::Vector<float, 4> vec4a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        lab::Vector<float, 4> vec4b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
 
-        auto x = vec2a.DotProduct(vec2b);
-        auto y = LAB::DotProduct(LAB::CrossProduct(vec3a, vec3b), vec3b);
-        auto z = LAB::DotProduct(vec4a, vec4b);
-        auto w = LAB::DotProduct(vec4a + vec4b, vec4b);
+        auto x = vec2a.Dot(vec2b);
+        auto y = lab::Dot(lab::Cross(vec3a, vec3b), vec3b);
+        auto z = lab::Dot(vec4a, vec4b);
+        auto w = lab::Dot(vec4a + vec4b, vec4b);
 
-        lab = LAB::Vector<float, 4>(x, y, z, w);
+        lab = lab::Vector<float, 4>(x, y, z, w);
     }
     DirectX::XMFLOAT4 dx;
     {
@@ -1747,15 +1747,15 @@ void CalculateComplex2Accuracy(std::ofstream& accuracyFile){
 
         glmV = glm::cross((vec3a + vec3b) * vec3c - vec3d, vec3a);
     }
-    LAB::Vector<float, 3> lab;
+    lab::Vector<float, 3> lab;
     {
-        LAB::Vector<float, 3> vec3a(randomVals[0], randomVals[1], randomVals[2]);
-        LAB::Vector<float, 3> vec3b(randomVals[0], randomVals[1], randomVals[2]);
-        LAB::Vector<float, 3> vec3c(randomVals[0], randomVals[1], randomVals[2]);
-        LAB::Vector<float, 3> vec3d(randomVals[0], randomVals[1], randomVals[2]);
+        lab::Vector<float, 3> vec3a(randomVals[0], randomVals[1], randomVals[2]);
+        lab::Vector<float, 3> vec3b(randomVals[0], randomVals[1], randomVals[2]);
+        lab::Vector<float, 3> vec3c(randomVals[0], randomVals[1], randomVals[2]);
+        lab::Vector<float, 3> vec3d(randomVals[0], randomVals[1], randomVals[2]);
 
-        //LAB::CrossProduct();
-        lab = LAB::CrossProduct((vec3a + vec3b) * vec3c - vec3d, vec3a);
+        //lab::CrossProduct();
+        lab = lab::Cross((vec3a + vec3b) * vec3c - vec3d, vec3a);
     }
     DirectX::XMFLOAT3 dx;
     {
@@ -1797,7 +1797,6 @@ void CalculateComplex2Accuracy(std::ofstream& accuracyFile){
     //HANDLE_ACCURACY_DATA(4);
 }
 void CalculateComplex3Accuracy(std::ofstream& accuracyFile){
-    mathbench::vectors::complex3vec4;
 
     float randomVals[4] = {PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal(), PullRandomFloatVal()};
 
@@ -1819,12 +1818,12 @@ void CalculateComplex3Accuracy(std::ofstream& accuracyFile){
 
         glmV = (vec3a + vec3b) * vec3c - vec3d;
     }
-    LAB::Vector<float, 4> lab;
+    lab::Vector<float, 4> lab;
     {
-        LAB::Vector<float, 4> vec3a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
-        LAB::Vector<float, 4> vec3b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
-        LAB::Vector<float, 4> vec3c(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
-        LAB::Vector<float, 4> vec3d(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        lab::Vector<float, 4> vec3a(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        lab::Vector<float, 4> vec3b(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        lab::Vector<float, 4> vec3c(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
+        lab::Vector<float, 4> vec3d(randomVals[0], randomVals[1], randomVals[2], randomVals[3]);
 
         lab = (vec3a + vec3b) * vec3c - vec3d;
     }
@@ -1882,7 +1881,6 @@ void CalculateComplex3Accuracy(std::ofstream& accuracyFile){
     //HANDLE_ACCURACY_DATA(4);
 }
 void CalculateModelAccuracy(std::ofstream& accuracyFile){
-    mathbench::matrices::construct_model_matrix;
 
     DirectX::SimpleMath::Matrix sm;
     {
@@ -1905,14 +1903,14 @@ void CalculateModelAccuracy(std::ofstream& accuracyFile){
             glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 2.0f, 3.0f)
         );
     }
-    LAB::Matrix<float, 4, 4> lab;
+    lab::Matrix<float, 4, 4> lab;
     {
-        const LAB::Matrix<float, 4, 4> identity = LAB::Identity<float, 4>(1.f);
-        lab = LAB::Translate(identity, LAB::Vector<float, 3>(1.f, 2.f, 3.f)) *
-            LAB::Rotate(identity, 0.5f, LAB::Vector<float, 3>(1.f, 0.f, 0.f)) *
-            LAB::Rotate(identity, 0.5f, LAB::Vector<float, 3>(0.f, 1.f, 0.f)) *
-            LAB::Rotate(identity, 0.5f, LAB::Vector<float, 3>(0.f, 0.f, 1.f)) *
-            LAB::Scale(identity, LAB::Vector<float, 3>(1.f, 2.f, 3.f)
+        const lab::Matrix<float, 4, 4> identity{1.f};
+        lab = lab::Translate(identity, lab::Vector<float, 3>(1.f, 2.f, 3.f)) *
+            lab::Rotate(identity, 0.5f, lab::Vector<float, 3>(1.f, 0.f, 0.f)) *
+            lab::Rotate(identity, 0.5f, lab::Vector<float, 3>(0.f, 1.f, 0.f)) *
+            lab::Rotate(identity, 0.5f, lab::Vector<float, 3>(0.f, 0.f, 1.f)) *
+            lab::Scale(identity, lab::Vector<float, 3>(1.f, 2.f, 3.f)
         );
     }
 
@@ -1945,7 +1943,6 @@ void CalculateModelAccuracy(std::ofstream& accuracyFile){
     //HANDLE_ACCURACY_DATA(16);
 }
 void CalculateViewAccuracy(std::ofstream& accuracyFile){
-    mathbench::matrices::construct_view_matrix;
 
     DirectX::SimpleMath::Matrix sm;
     {
@@ -1962,12 +1959,12 @@ void CalculateViewAccuracy(std::ofstream& accuracyFile){
             glm::vec3(0.f, 1.f, 0.f));
     }
 
-    LAB::Matrix<float, 4, 4> lab;
-    LAB::Vector<float, 3> eye = LAB::Vector<float, 3>(1.f, 2.f, 3.f);
-    LAB::Vector<float, 3> center = LAB::Vector<float, 3>(4.0f, 5.0f, 6.0f);
-    LAB::Vector<float, 3> lookat = (center - eye).Normalized();
+    lab::Matrix<float, 4, 4> lab;
+    lab::Vector<float, 3> eye = lab::Vector<float, 3>(1.f, 2.f, 3.f);
+    lab::Vector<float, 3> center = lab::Vector<float, 3>(4.0f, 5.0f, 6.0f);
+    lab::Vector<float, 3> lookat = (center - eye).Normalized();
     {
-        lab = LAB::CreateViewMatrix(
+        lab = lab::CreateViewMatrix(
             eye,
             lookat
         );
@@ -2001,7 +1998,7 @@ void CalculateProjectionAccuracy(std::ofstream& accuracyFile){
     glm::mat4 glmV = glm::perspective(0.5f, 1.0f, 0.1f, 100.0f);
     
     
-    LAB::Matrix<float, 4, 4> lab = LAB::CreateProjectionMatrix(0.5f, 1.f, 0.1f, 100.f);
+    lab::Matrix<float, 4, 4> lab = lab::CreateProjectionMatrix(0.5f, 1.f, 0.1f, 100.f);
     
         
     DirectX::XMMATRIX dx = DirectX::XMMatrixPerspectiveFovLH(0.5f, 1.0f, 0.1f, 100.0f);
@@ -2016,7 +2013,7 @@ void CalculateOrthoAccuracy(std::ofstream& accuracyFile){
     mathbench::matrices::ortho_projection_matrix;
     DirectX::SimpleMath::Matrix sm= DirectX::SimpleMath::Matrix::CreateOrthographic(1280, 720, 0.1f, 100.0f);
     glm::mat4 glmV = glm::ortho<float>(0, 1280, 0, 720, 0.1f, 100.0f);
-    LAB::Matrix<float, 4, 4> lab = LAB::CreateOrthographicMatrix(0.f, 720.f, 0.f, 1280.f, 0.1f, 100.f);
+    lab::Matrix<float, 4, 4> lab = lab::CreateOrthographicMatrix(0.f, 720.f, 0.f, 1280.f, 0.1f, 100.f);
     DirectX::XMMATRIX dx = DirectX::XMMatrixOrthographicLH(1280, 720, 0.1f, 100.0f);
     move::math::float4x4 mv = move::math::mat4x4f::orthographic(1280, 720, 0.1f, 100.0f);
 
@@ -2039,7 +2036,7 @@ void CalculateMatVecAccuracy(std::ofstream& accuracyFile){
     memcpy(&smMat, randomVals, sizeof(float) * 16);
     glm::mat4 glmMat;
     memcpy(&glmMat, randomVals, sizeof(float) * 16);
-    LAB::Matrix<float, 4, 4> labMat;
+    lab::Matrix<float, 4, 4> labMat;
     memcpy(&labMat, randomVals, sizeof(float) * 16);
     DirectX::XMMATRIX dxMat;
     memcpy(&dxMat, randomVals, sizeof(float) * 16);
@@ -2049,7 +2046,7 @@ void CalculateMatVecAccuracy(std::ofstream& accuracyFile){
 
     DirectX::SimpleMath::Vector4 sm2;
     glm::vec4 glmV2;
-    LAB::Vector<float, 4> lab2;
+    lab::Vector<float, 4> lab2;
     DirectX::XMVECTOR dx2;
     move::math::fast_float4 mv2;
     memcpy(&sm2, randomVecVals, sizeof(float) * 4);
@@ -2060,7 +2057,7 @@ void CalculateMatVecAccuracy(std::ofstream& accuracyFile){
 
     DirectX::SimpleMath::Vector4 sm = DirectX::SimpleMath::Vector4::Transform(sm2, smMat);
     glm::vec4 glmV = glmMat * glmV2;
-    LAB::Vector<float, 4> lab = labMat * lab2;
+    lab::Vector<float, 4> lab = labMat * lab2;
     DirectX::XMFLOAT4 dx;
     DirectX::XMVECTOR dxA = DirectX::XMVector4Transform(dx2, dxMat);
     DirectX::XMStoreFloat4(&dx, dxA);
@@ -2087,7 +2084,7 @@ void CalculateMatMatAccuracy(std::ofstream& accuracyFile){
     memcpy(&smMat, randomVals, sizeof(float) * 16);
     glm::mat4 glmMat;
     memcpy(&glmMat, randomVals, sizeof(float) * 16);
-    LAB::Matrix<float, 4, 4> labMat;
+    lab::Matrix<float, 4, 4> labMat;
     memcpy(&labMat, randomVals, sizeof(float) * 16);
     DirectX::XMMATRIX dxMat;
     memcpy(&dxMat, randomVals, sizeof(float) * 16);
@@ -2098,7 +2095,7 @@ void CalculateMatMatAccuracy(std::ofstream& accuracyFile){
     memcpy(&smMat2, randomVals2, sizeof(float) * 16);
     glm::mat4 glmMat2;
     memcpy(&glmMat2, randomVals2, sizeof(float) * 16);
-    LAB::Matrix<float, 4, 4> labMat2;
+    lab::Matrix<float, 4, 4> labMat2;
     memcpy(&labMat2, randomVals2, sizeof(float) * 16);
     DirectX::XMMATRIX dxMat2;
     memcpy(&dxMat2, randomVals2, sizeof(float) * 16);
@@ -2110,7 +2107,7 @@ void CalculateMatMatAccuracy(std::ofstream& accuracyFile){
 
     glm::mat4 glmV = glmMat * glmMat2;
 
-    LAB::Matrix<float, 4, 4> lab = labMat * labMat2;
+    lab::Matrix<float, 4, 4> lab = labMat * labMat2;
 
     DirectX::XMMATRIX dx = DirectX::XMMatrixMultiply(dxMat, dxMat2);
 
